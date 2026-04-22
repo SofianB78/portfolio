@@ -1,0 +1,2591 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sofian Bajou - Portfolio BTS SIO SISR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: #f5f1ea;
+            color: #0a0a0a;
+            overflow-x: hidden;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 70px;
+            background: rgba(245, 241, 234, 0.95);
+            backdrop-filter: blur(10px);
+
+            border-bottom: 2px solid rgba(10, 10, 10, 0.08);
+            z-index: 1000;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 0 30px;
+            gap: 30px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+            color: #0a0a0a;
+            flex-shrink: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #0a0a0a;
+            text-decoration: none;
+            padding: 10px 18px;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-link span {
+            opacity: 1;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #dc2626, #991b1b);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::before {
+            width: 80%;
+        }
+
+        .nav-link:hover {
+            color: rgba(10, 10, 10, 0.75);
+        }
+
+        .nav-link.active {
+            color: rgba(10, 10, 10, 0.75);
+        }
+
+        .nav-link.active::before {
+            width: 80%;
+        }
+
+        .social-links {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0a0a0a;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: rgba(10, 10, 10, 0.08);
+            color: rgba(10, 10, 10, 0.75);
+            transform: scale(1.1);
+        }
+
+        main {
+            margin-top: 70px;
+            position: relative;
+            z-index: 1;
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 100px 80px;
+            position: relative;
+        }
+
+        /* ===== HERO ===== */
+        #hero {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #network-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h1 {
+            font-family: 'Anton', sans-serif;
+            font-size: 120px;
+            font-weight: 400;
+            color: #0a0a0a;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            line-height: 0.95;
+            text-transform: uppercase;
+        }
+
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-content h2 {
+            font-size: 28px;
+            color: #0a0a0a;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-weight: 300;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: #4a4a4a;
+            max-width: 700px;
+            line-height: 1.8;
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            padding: 15px 40px;
+            background: #f5f1ea;
+            color: #0a0a0a;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.35);
+            cursor: pointer;
+            font-family: 'Manrope', sans-serif;
+            animation: btnPulse 4s ease infinite;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% { color: #0a0a0a; }
+            50% { color: #dc2626; }
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.5);
+        }
+
+        /* ===== SECTION TITLES ===== */
+        .section-title {
+            font-family: 'Anton', sans-serif;
+            font-size: 56px;
+            margin-bottom: 60px;
+            position: relative;
+            display: inline-block;
+            font-weight: 400;
+            letter-spacing: 0;
+            text-transform: uppercase;
+            color: #0a0a0a;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #dc2626, rgba(220, 38, 38, 0.3));
+            border-radius: 2px;
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: rgba(220, 38, 38, 0.03);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(220, 38, 38, 0.05), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 255, 255, 0.15);
+            border-color: rgba(10, 10, 10, 0.15);
+        }
+
+        .card h3 {
+            font-size: 24px;
+            color: #0a0a0a;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .card p {
+            color: #6b6b6b;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        /* ===== GRIDS ===== */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        /* ===== PROFIL SECTION ===== */
+        .profil-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* ===== TIMELINE ===== */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #dc2626, #991b1b, transparent);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 35px;
+            padding-left: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -35px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #dc2626;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+        }
+
+        .timeline-date {
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            color: rgba(10, 10, 10, 0.75);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .timeline-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #1a1a1a;
+        }
+
+        .timeline-school {
+            font-size: 14px;
+            color: #4a4a4a;
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+
+        .timeline-desc {
+            font-size: 14px;
+            color: #4a4a4a;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* ===== BTS INFO CARDS (Fernandes style) ===== */
+        .bts-info-card {
+            padding: 30px;
+        }
+
+        .bts-info-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .bts-info-icon {
+            font-size: 24px;
+            color: #991b1b;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .bts-info-header h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0a0a0a;
+        }
+
+        .bts-info-sub {
+            font-size: 13px;
+            color: #4a4a4a;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        .bts-info-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .bts-info-list li {
+            font-size: 14px;
+            color: #6b6b6b;
+            font-weight: 300;
+            padding-left: 18px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .bts-info-list li::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: #991b1b;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .bts-comp-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #991b1b;
+            margin-bottom: 18px;
+        }
+
+        .bts-option-card {
+            padding: 30px;
+        }
+
+        .bts-option-active {
+            border-color: rgba(220, 38, 38, 0.4);
+        }
+
+        .bts-option-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(10, 10, 10, 0.05);
+        }
+
+        .bts-option-icon {
+            font-size: 22px;
+            color: #991b1b;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 10px;
+            flex-shrink: 0;
+        }
+
+        .bts-option-header h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0a0a0a;
+        }
+
+        .bts-sub-section {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a4a4a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+
+        .bts-tag-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
+        .bts-tag {
+            padding: 6px 14px;
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.15);
+            border-radius: 8px;
+            font-size: 13px;
+            color: #2a2a2a;
+            font-weight: 400;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== EPREUVES ===== */
+        .epreuve-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .epreuve-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px 25px;
+            background: rgba(10, 10, 10, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(10, 10, 10, 0.07);
+            transition: all 0.3s ease;
+        }
+
+        .epreuve-item:hover {
+            border-color: rgba(220, 38, 38, 0.3);
+            background: rgba(10, 10, 10, 0.03);
+        }
+
+        .epreuve-code {
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(10, 10, 10, 0.75);
+            background: rgba(10, 10, 10, 0.08);
+            padding: 6px 12px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .epreuve-name {
+            flex: 1;
+            font-weight: 400;
+            font-size: 15px;
+        }
+
+        .epreuve-type {
+            font-size: 13px;
+            color: #4a4a4a;
+            font-weight: 300;
+            white-space: nowrap;
+        }
+
+        /* ===== ENTREPRISE ===== */
+        .mission-card {
+            background: rgba(10, 10, 10, 0.03);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(10, 10, 10, 0.07);
+            transition: all 0.3s ease;
+        }
+
+        .mission-card:hover {
+            border-color: rgba(220, 38, 38, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .mission-icon {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .mission-card h4 {
+            font-size: 18px;
+            color: rgba(10, 10, 10, 0.75);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .mission-card p {
+            font-size: 14px;
+            color: #4a4a4a;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        /* ===== RÉALISATIONS ===== */
+        .realisation-card {
+            background: rgba(220, 38, 38, 0.03);
+            border-radius: 20px;
+            padding: 35px;
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .realisation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 255, 255, 0.15);
+            border-color: rgba(10, 10, 10, 0.15);
+        }
+
+        .realisation-tag {
+            display: inline-block;
+            font-family: 'Manrope', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(10, 10, 10, 0.75);
+            background: rgba(10, 10, 10, 0.05);
+            padding: 5px 14px;
+            border-radius: 50px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .realisation-card h3 {
+            font-size: 20px;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .realisation-card p {
+            font-size: 14px;
+            color: #4a4a4a;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .realisation-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(10, 10, 10, 0.75);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .realisation-link:hover {
+            gap: 12px;
+        }
+
+        /* ===== VEILLE TECHNO ===== */
+        .veille-intro {
+            max-width: 900px;
+            margin-bottom: 50px;
+        }
+
+        .veille-intro p {
+            color: #4a4a4a;
+            line-height: 1.8;
+            font-weight: 300;
+            font-size: 16px;
+        }
+
+        .veille-theme {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.08), rgba(220, 38, 38, 0.08));
+            border: 1px solid rgba(220, 38, 38, 0.15);
+            border-radius: 16px;
+            padding: 30px 35px;
+            margin-bottom: 40px;
+        }
+
+        .veille-theme h3 {
+            color: rgba(10, 10, 10, 0.75);
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .veille-theme p {
+            color: #6b6b6b;
+            font-size: 15px;
+            line-height: 1.7;
+            font-style: italic;
+            font-weight: 300;
+        }
+
+        .veille-section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            margin-top: 50px;
+            color: #0a0a0a;
+        }
+
+        .veille-section-title span {
+            color: rgba(10, 10, 10, 0.75);
+        }
+
+        .source-list {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .source-tag {
+            padding: 8px 18px;
+            background: rgba(220, 38, 38, 0.03);
+            border: 1px solid rgba(220, 38, 38, 0.15);
+            border-radius: 50px;
+            color: #6b6b6b;
+            font-size: 13px;
+            font-weight: 400;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .source-tag:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: rgba(10, 10, 10, 0.75);
+            background: rgba(10, 10, 10, 0.05);
+        }
+
+        .veille-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(10, 10, 10, 0.07);
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .veille-card:hover {
+            border-color: rgba(220, 38, 38, 0.3);
+        }
+
+        .veille-card h4 {
+            font-size: 18px;
+            color: rgba(10, 10, 10, 0.75);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .veille-card p {
+            color: #4a4a4a;
+            line-height: 1.7;
+            font-size: 14px;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .veille-card .highlight {
+            color: rgba(10, 10, 10, 0.75);
+            font-weight: 500;
+        }
+
+        .veille-conclusion {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.06), rgba(220, 38, 38, 0.06));
+            border: 1px solid rgba(220, 38, 38, 0.15);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 50px;
+        }
+
+        .veille-conclusion h3 {
+            font-size: 22px;
+            color: rgba(10, 10, 10, 0.75);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .veille-conclusion p {
+            color: #6b6b6b;
+            line-height: 1.8;
+            font-size: 15px;
+            font-weight: 300;
+        }
+
+        /* ===== CONTACT ===== */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 800px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            border: 1px solid rgba(10, 10, 10, 0.07);
+            text-decoration: none;
+            color: #1a1a1a;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.15);
+        }
+
+        .contact-icon {
+            font-size: 28px;
+        }
+
+        .contact-label {
+            font-size: 13px;
+            color: #4a4a4a;
+            font-weight: 400;
+        }
+
+        .contact-value {
+            font-size: 16px;
+            color: #0a0a0a;
+            font-weight: 500;
+        }
+
+        /* ===== POURSUITE D'ETUDES ===== */
+        .poursuite-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .poursuite-item {
+            padding: 8px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            border-radius: 10px;
+            font-size: 13px;
+            color: #6b6b6b;
+            font-weight: 400;
+        }
+
+        /* ===== TABLEAU DE SYNTHESE ===== */
+        .tableau-container {
+            overflow-x: auto;
+            margin-top: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 255, 0.15);
+        }
+
+        .tableau-synthese {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 1100px;
+        }
+
+        .tableau-synthese thead th {
+            background: rgba(10, 10, 10, 0.05);
+            color: rgba(10, 10, 10, 0.75);
+            padding: 14px 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            line-height: 1.5;
+        }
+
+        .tableau-synthese thead th:first-child {
+            text-align: left;
+            min-width: 300px;
+        }
+
+        .tableau-synthese tbody td {
+            padding: 12px;
+            border: 1px solid rgba(10, 10, 10, 0.07);
+            vertical-align: middle;
+            color: #6b6b6b;
+            font-weight: 300;
+        }
+
+        .tableau-synthese tbody td:first-child {
+            font-weight: 400;
+            color: #1a1a1a;
+        }
+
+        .tableau-synthese tbody td:not(:first-child) {
+            text-align: center;
+            width: 80px;
+        }
+
+        .tableau-synthese tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .tableau-section-header td {
+            background: rgba(10, 10, 10, 0.03) !important;
+            color: #9333ea !important;
+            font-weight: 600 !important;
+            font-size: 13px;
+            padding: 10px 12px !important;
+            letter-spacing: 0.5px;
+        }
+
+        .tableau-header-row {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.05), rgba(220, 38, 38, 0.05));
+        }
+
+        .tableau-header-row td {
+            text-align: center;
+            padding: 20px !important;
+        }
+
+        .tableau-header-row h3 {
+            font-size: 20px;
+            color: #0a0a0a;
+            font-weight: 700;
+        }
+
+        .tableau-header-row p {
+            color: #4a4a4a;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .tableau-info {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tableau-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .tableau-info-label {
+            color: #4a4a4a;
+            font-weight: 400;
+        }
+
+        .tableau-info-value {
+            color: #0a0a0a;
+            font-weight: 500;
+        }
+
+        .check-mark {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            background: rgba(0, 255, 255, 0.15);
+            color: rgba(10, 10, 10, 0.75);
+            font-size: 13px;
+            line-height: 22px;
+            text-align: center;
+        }
+
+        .empty-mark {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 1px solid rgba(10, 10, 10, 0.08);
+        }
+
+        /* ===== SCROLL REVEAL ===== */
+        .reveal {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        body.js-ready .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        body.js-ready .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #555;
+            font-size: 14px;
+            border-top: 1px solid rgba(10, 10, 10, 0.05);
+            font-weight: 300;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .grid-3 { grid-template-columns: 1fr 1fr; }
+            .profil-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ===== PDF VIEWER ===== */
+        .pdf-viewer {
+            width: 100%;
+            height: 720px;
+            background: #2a2a2a;
+            position: relative;
+        }
+
+        .pdf-viewer iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .pdf-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 25px;
+            background: #ffffff;
+            border-top: 1px solid rgba(10, 10, 10, 0.08);
+        }
+
+        .pdf-link {
+            color: #dc2626;
+            text-decoration: underline;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .pdf-link:hover {
+            color: #991b1b;
+        }
+
+        .pdf-download {
+            padding: 10px 28px;
+            background: #dc2626;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .pdf-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            nav { padding: 0 15px; gap: 10px; height: 60px; }
+            main { margin-top: 60px; }
+            .logo { width: 38px; height: 38px; font-size: 16px; }
+            .nav-link { padding: 8px 10px; font-size: 12px; gap: 8px; }
+            .nav-links { gap: 0; overflow-x: auto; justify-content: flex-start; scrollbar-width: none; -ms-overflow-style: none; }
+            .nav-links::-webkit-scrollbar { display: none; }
+            .social-links { gap: 5px; }
+            .social-link { width: 32px; height: 32px; font-size: 12px; }
+            section { padding: 60px 25px; }
+            .hero-content h1 { font-size: 42px; }
+            .hero-content h2 { font-size: 18px; letter-spacing: 2px; }
+            .section-title { font-size: 32px; }
+            .grid-2, .grid-3, .contact-grid { grid-template-columns: 1fr; }
+            .bts-tabs { gap: 8px; }
+            .bts-tab { padding: 10px 18px; font-size: 13px; }
+            .pdf-viewer { height: 500px; }
+            .pdf-footer { flex-direction: column; gap: 12px; padding: 15px; }
+        }
+
+        /* ===== SECTION COMPÉTENCES E5 ===== */
+        .e5-intro-box {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.06), rgba(153, 27, 27, 0.04));
+            border: 1px solid rgba(220, 38, 38, 0.18);
+            border-radius: 20px;
+            padding: 40px 45px;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .e5-intro-box::before {
+            content: 'E5';
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            font-family: 'Anton', sans-serif;
+            font-size: 130px;
+            color: rgba(220, 38, 38, 0.10);
+            line-height: 1;
+            letter-spacing: -4px;
+            pointer-events: none;
+        }
+        .e5-intro-box h3 {
+            font-size: 22px;
+            color: #0a0a0a;
+            font-weight: 700;
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 2;
+        }
+        .e5-intro-box > p {
+            color: #4a4a4a;
+            line-height: 1.75;
+            font-weight: 300;
+            font-size: 15px;
+            max-width: 720px;
+            position: relative;
+            z-index: 2;
+        }
+        .e5-modalites {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(220, 38, 38, 0.15);
+            position: relative;
+            z-index: 2;
+        }
+        .e5-modalite strong {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #991b1b;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+        }
+        .e5-modalite span {
+            color: #4a4a4a;
+            font-size: 13px;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+        .blocs-grid {
+            display: grid;
+            gap: 18px;
+        }
+        .bloc {
+            background: rgba(220, 38, 38, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .bloc::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(220, 38, 38, 0.05), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+        .bloc:hover::before {
+            left: 100%;
+        }
+        .bloc:hover {
+            border-color: rgba(220, 38, 38, 0.35);
+            box-shadow: 0 15px 45px rgba(220, 38, 38, 0.1);
+        }
+        .bloc-head {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding: 28px 35px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+        .bloc-head:hover {
+            background: rgba(220, 38, 38, 0.04);
+        }
+        .bloc-num {
+            font-family: 'Anton', sans-serif;
+            font-size: 58px;
+            font-weight: 400;
+            color: #dc2626;
+            line-height: 0.9;
+            letter-spacing: -2px;
+            min-width: 70px;
+            transition: color 0.3s ease;
+        }
+        .bloc.open .bloc-num {
+            color: #991b1b;
+        }
+        .bloc-title-wrap {
+            flex: 1;
+        }
+        .bloc-title {
+            font-size: 19px;
+            font-weight: 700;
+            color: #0a0a0a;
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+        .bloc-category {
+            font-size: 12px;
+            font-weight: 500;
+            color: #991b1b;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .bloc-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #dc2626;
+            font-size: 22px;
+            font-weight: 300;
+            transition: all 0.4s ease;
+            flex-shrink: 0;
+        }
+        .bloc.open .bloc-toggle {
+            transform: rotate(45deg);
+            background: #dc2626;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+        }
+        .bloc-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        .bloc.open .bloc-body {
+            max-height: 3000px;
+        }
+        .bloc-body-inner {
+            padding: 0 35px 35px 35px;
+            border-top: 1px solid rgba(220, 38, 38, 0.12);
+            padding-top: 28px;
+            margin-top: 5px;
+            position: relative;
+            z-index: 2;
+        }
+        .bloc-subtitle {
+            font-size: 11px;
+            font-weight: 600;
+            color: #991b1b;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            margin-bottom: 16px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .bloc-subtitle:first-child {
+            margin-top: 0;
+        }
+        .bloc-subtitle::before {
+            content: '';
+            width: 24px;
+            height: 2px;
+            background: linear-gradient(90deg, #dc2626, #991b1b);
+            display: inline-block;
+        }
+        .bloc-skills {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .bloc-skills li {
+            font-size: 14px;
+            color: #4a4a4a;
+            font-weight: 300;
+            padding-left: 22px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .bloc-skills li::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            top: -2px;
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 18px;
+        }
+        .bloc-real-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            margin-top: 5px;
+        }
+        .bloc-real-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: rgba(10, 10, 10, 0.03);
+            border: 1px solid rgba(10, 10, 10, 0.07);
+            border-radius: 12px;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .bloc-real-link:hover {
+            background: rgba(220, 38, 38, 0.05);
+            border-color: rgba(220, 38, 38, 0.3);
+            transform: translateX(3px);
+            color: #991b1b;
+        }
+        .bloc-real-badge {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 5px;
+            background: #dc2626;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+        .bloc-real-badge.doc { background: #991b1b; }
+        .bloc-real-badge.link { background: #0a0a0a; }
+        .bloc-real-badge.xls { background: #0f766e; }
+        .bloc-real-badge.internal { background: rgba(10, 10, 10, 0.4); }
+        .bloc-real-text {
+            flex: 1;
+            line-height: 1.3;
+        }
+        @media (max-width: 768px) {
+            .e5-intro-box { padding: 28px 22px; }
+            .e5-intro-box::before { font-size: 80px; right: 15px; }
+            .bloc-head { padding: 22px 20px; gap: 15px; }
+            .bloc-num { font-size: 42px; min-width: 50px; }
+            .bloc-title { font-size: 16px; }
+            .bloc-body-inner { padding: 22px 20px 25px 20px; }
+            .bloc-toggle { width: 36px; height: 36px; font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <nav>
+        <div class="logo">SB</div>
+        <div class="nav-links">
+            <a href="#hero" class="nav-link"><span>Accueil</span></a>
+            <a href="#profil" class="nav-link"><span>Mon Profil</span></a>
+            <a href="#bts" class="nav-link"><span>BTS SIO</span></a>
+            <a href="#entreprise" class="nav-link"><span>Entreprise</span></a>
+            <a href="#competences" class="nav-link"><span>Compétences E5</span></a>
+            <a href="#realisations" class="nav-link"><span>Réalisations</span></a>
+            <a href="#veille" class="nav-link"><span>Veille Techno</span></a>
+            <a href="#tableau" class="nav-link"><span>Tableau E5</span></a>
+            <a href="#contact" class="nav-link"><span>Contact</span></a>
+        </div>
+        <div class="social-links">
+            <a href="http://www.linkedin.com/in/sofian-bajou" target="_blank" class="social-link">in</a>
+            <a href="tel:0782214885" class="social-link">tel</a>
+        </div>
+    </nav>
+
+    <main>
+        <section id="hero">
+            <canvas id="network-canvas"></canvas>
+            <div class="hero-content">
+                <h1>SOFIAN BAJOU</h1>
+                <h2>Étudiant BTS SIO SISR</h2>
+                <p>Bienvenue sur mon portfolio ! Actuellement étudiant en BTS SIO à l'ENSITECH de Montigny-Le-Bretonneux, je vous propose de découvrir mon parcours, mes compétences et tout ce qui a bonifié mon développement professionnel.</p>
+                <a href="#profil" class="cta-button">Découvrir mon parcours →</a>
+            </div>
+        </section>
+
+        <section id="profil">
+            <h2 class="section-title reveal">Mon Profil</h2>
+            <div class="profil-grid">
+                <div class="card reveal">
+                    <h3>À propos de moi</h3>
+                    <p>Je m'appelle Sofian Bajou, j'ai 22 ans. Actuellement étudiant au sein de l'ENSITECH en première année de BTS SIO SISR (Solutions d'Infrastructures Systèmes et Réseaux).</p>
+                    <br>
+                    <p>Mon parcours académique reflète ma passion pour les sciences et l'informatique. Après avoir obtenu un baccalauréat en mathématiques et physique-chimie, j'ai poursuivi mes études avec une licence en MIASHS. Cette formation m'a permis d'acquérir une solide base théorique et une compréhension approfondie des mathématiques appliquées aux sciences humaines et sociales.</p>
+                    <br>
+                    <p>Cependant, j'ai ressenti le besoin de compléter cette formation théorique par une expérience pratique. C'est pourquoi j'ai choisi de me lancer dans un BTS SIO en alternance. Cette décision m'a offert l'opportunité de développer des compétences techniques en informatique tout en les appliquant concrètement en entreprise. Ce parcours hybride m'a permis de renforcer mon expertise et de mieux me préparer aux défis professionnels à venir.</p>
+                </div>
+                <div class="reveal" style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="card">
+                        <h3>Formation</h3>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">2024 — 2026</div>
+                                <div class="timeline-title">BTS SIO SISR</div>
+                                <div class="timeline-school">ENSITECH — Montigny-Le-Bretonneux</div>
+                                <div class="timeline-desc">Me voilà en BTS, combinant théorie et pratique pour une formation complète et enrichissante. Cette expérience me permet d'appliquer concrètement les connaissances acquises, renforçant ainsi mon parcours académique et professionnel.</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">2021 — 2022</div>
+                                <div class="timeline-title">Licence 1 MIASHS</div>
+                                <div class="timeline-school">Université de Sciences — Versailles</div>
+                                <div class="timeline-desc">Ma licence m'a permis de réaliser que je souhaitais poursuivre en alternance pour allier théorie et pratique.</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">2018 — 2021</div>
+                                <div class="timeline-title">Baccalauréat Général</div>
+                                <div class="timeline-school">Plaine de Neauphle — Trappes</div>
+                                <div class="timeline-desc">Spécialités Mathématiques et Physique-Chimie. Malgré les nombreux défis posés par la pandémie de COVID-19, j'ai persévéré et obtenu mon baccalauréat avec succès. Cette période m'a appris la résilience et l'adaptabilité.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="bts">
+            <h2 class="section-title reveal">Le BTS SIO</h2>
+
+            <h3 class="reveal" style="font-size: 22px; margin-bottom: 25px; color: #0a0a0a;">Présentation de la formation</h3>
+            <div class="grid-3 reveal" style="margin-bottom: 40px;">
+                <div class="card bts-info-card">
+                    <div class="bts-info-header">
+                        <span class="bts-info-icon">◈</span>
+                        <div>
+                            <h4>Organisation</h4>
+                            <p class="bts-info-sub">2 ans de formation</p>
+                        </div>
+                    </div>
+                    <ul class="bts-info-list">
+                        <li>1850 heures de formation</li>
+                        <li>10 semaines de stage minimum</li>
+                        <li>Alternance possible</li>
+                    </ul>
+                </div>
+                <div class="card bts-info-card">
+                    <div class="bts-info-header">
+                        <span class="bts-info-icon">◈</span>
+                        <div>
+                            <h4>Programme</h4>
+                            <p class="bts-info-sub">Formation complète</p>
+                        </div>
+                    </div>
+                    <ul class="bts-info-list">
+                        <li>Culture générale et expression</li>
+                        <li>Culture Économique Juridique et Managériale</li>
+                        <li>Anglais technique</li>
+                        <li>Mathématiques pour l'informatique</li>
+                    </ul>
+                </div>
+                <div class="card bts-info-card">
+                    <div class="bts-info-header">
+                        <span class="bts-info-icon">◈</span>
+                        <div>
+                            <h4>Validation</h4>
+                            <p class="bts-info-sub">Diplôme d'État</p>
+                        </div>
+                    </div>
+                    <ul class="bts-info-list">
+                        <li>Niveau 5 (Bac+2)</li>
+                        <li>120 crédits ECTS (60/an)</li>
+                        <li>Certification professionnelle</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="reveal" style="font-size: 22px; margin-bottom: 25px; color: #0a0a0a;">Compétences communes</h3>
+            <div class="grid-3 reveal" style="margin-bottom: 40px;">
+                <div class="card bts-info-card">
+                    <h4 class="bts-comp-title">Support et assistance</h4>
+                    <ul class="bts-info-list">
+                        <li>Gestion du patrimoine informatique</li>
+                        <li>Réponse aux incidents</li>
+                        <li>Développement de la présence en ligne</li>
+                    </ul>
+                </div>
+                <div class="card bts-info-card">
+                    <h4 class="bts-comp-title">Cybersécurité</h4>
+                    <ul class="bts-info-list">
+                        <li>Protection des données</li>
+                        <li>Sécurisation des équipements</li>
+                        <li>Politique de sécurité</li>
+                    </ul>
+                </div>
+                <div class="card bts-info-card">
+                    <h4 class="bts-comp-title">Gestion de projet</h4>
+                    <ul class="bts-info-list">
+                        <li>Analyse des besoins</li>
+                        <li>Documentation technique</li>
+                        <li>Travail en équipe</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid-2 reveal" style="margin-bottom: 40px;">
+                <div class="card bts-option-card bts-option-active">
+                    <div class="bts-option-header">
+                        <span class="bts-option-icon">◈</span>
+                        <div>
+                            <h4>Option SISR</h4>
+                            <p class="bts-info-sub">Solutions d'Infrastructure, Systèmes et Réseaux</p>
+                        </div>
+                    </div>
+
+                    <h5 class="bts-sub-section">Compétences techniques</h5>
+                    <div class="bts-tag-grid">
+                        <span class="bts-tag">Administration Windows</span>
+                        <span class="bts-tag">Administration Linux</span>
+                        <span class="bts-tag">Virtualisation</span>
+                        <span class="bts-tag">Réseaux TCP/IP</span>
+                    </div>
+
+                    <h5 class="bts-sub-section">Services et sécurité</h5>
+                    <div class="bts-tag-grid">
+                        <span class="bts-tag">Active Directory</span>
+                        <span class="bts-tag">Pare-feu</span>
+                        <span class="bts-tag">VPN</span>
+                        <span class="bts-tag">Supervision</span>
+                    </div>
+
+                    <h5 class="bts-sub-section">Débouchés professionnels</h5>
+                    <ul class="bts-info-list">
+                        <li>Administrateur réseaux</li>
+                        <li>Technicien support</li>
+                        <li>Responsable infrastructure</li>
+                        <li>Consultant cybersécurité</li>
+                    </ul>
+                </div>
+
+                <div class="card bts-option-card">
+                    <div class="bts-option-header">
+                        <span class="bts-option-icon">◈</span>
+                        <div>
+                            <h4>Option SLAM</h4>
+                            <p class="bts-info-sub">Solutions Logicielles et Applications Métiers</p>
+                        </div>
+                    </div>
+
+                    <h5 class="bts-sub-section">Compétences techniques</h5>
+                    <div class="bts-tag-grid">
+                        <span class="bts-tag">Développement Web</span>
+                        <span class="bts-tag">Bases de données</span>
+                        <span class="bts-tag">Applications mobiles</span>
+                        <span class="bts-tag">Programmation objet</span>
+                    </div>
+
+                    <h5 class="bts-sub-section">Technologies</h5>
+                    <div class="bts-tag-grid">
+                        <span class="bts-tag">Java, C#, Python</span>
+                        <span class="bts-tag">HTML, CSS, JavaScript</span>
+                        <span class="bts-tag">React, Angular</span>
+                        <span class="bts-tag">SQL, NoSQL</span>
+                    </div>
+
+                    <h5 class="bts-sub-section">Débouchés professionnels</h5>
+                    <ul class="bts-info-list">
+                        <li>Développeur d'applications</li>
+                        <li>Développeur Web</li>
+                        <li>Analyste programmeur</li>
+                        <li>Chef de projet junior</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="reveal" style="font-size: 22px; margin-bottom: 25px; color: #0a0a0a;">Les épreuves du BTS SIO</h3>
+            <div class="card reveal" style="margin-bottom: 40px;">
+                <div class="epreuve-list">
+                    <div class="epreuve-item">
+                        <span class="epreuve-code">E1</span>
+                        <span class="epreuve-name">Culture et communication</span>
+                        <span class="epreuve-type">Écrit — 4h</span>
+                    </div>
+                    <div class="epreuve-item">
+                        <span class="epreuve-code">E2</span>
+                        <span class="epreuve-name">Mathématiques pour l'informatique</span>
+                        <span class="epreuve-type">Écrit — 2h</span>
+                    </div>
+                    <div class="epreuve-item">
+                        <span class="epreuve-code">E3</span>
+                        <span class="epreuve-name">Culture économique, juridique et managériale pour l'informatique</span>
+                        <span class="epreuve-type">Écrit — 4h</span>
+                    </div>
+                    <div class="epreuve-item">
+                        <span class="epreuve-code">E5</span>
+                        <span class="epreuve-name">Support et mise à disposition de services informatiques</span>
+                        <span class="epreuve-type">Oral — 40min</span>
+                    </div>
+                    <div class="epreuve-item">
+                        <span class="epreuve-code">E6</span>
+                        <span class="epreuve-name">Administration des systèmes et des réseaux</span>
+                        <span class="epreuve-type">Pratique + Oral — 1h30 + 40min</span>
+                    </div>
+                    <div class="epreuve-item">
+                        <span class="epreuve-code">E7</span>
+                        <span class="epreuve-name">Cybersécurité des services informatiques</span>
+                        <span class="epreuve-type">Écrit — 4h</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="reveal" style="font-size: 22px; margin-bottom: 25px; color: #0a0a0a;">Poursuites d'études</h3>
+            <div class="card reveal">
+                <p style="margin-bottom: 20px;">Avec un très bon dossier ou une mention à l'examen, une poursuite d'études est envisageable en licence LMD, en licence professionnelle, en école d'ingénieurs ou en école spécialisée.</p>
+                <div class="poursuite-list">
+                    <div class="poursuite-item">Administrateur système, réseau et sécurité</div>
+                    <div class="poursuite-item">Administrateur systèmes, réseaux et bases de données</div>
+                    <div class="poursuite-item">Chef de projet logiciel et réseau</div>
+                    <div class="poursuite-item">Concepteur de systèmes d'information</div>
+                    <div class="poursuite-item">Licence pro — Administration et sécurité des systèmes et des réseaux</div>
+                    <div class="poursuite-item">Licence pro — Conduite de projets</div>
+                    <div class="poursuite-item">Licence pro — Systèmes d'information et gestion de données</div>
+                    <div class="poursuite-item">Licence pro — Réseaux informatiques et télécommunications</div>
+                    <div class="poursuite-item">Licence informatique / parcours MIAGE</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="entreprise">
+            <h2 class="section-title reveal">Mon Entreprise</h2>
+
+            <div class="card reveal" style="margin-bottom: 40px;">
+                <h3>Conseil Départemental des Yvelines</h3>
+                <p>Le conseil départemental règle par ses délibérations les affaires du département dans les domaines de compétences que la loi lui attribue. Il est compétent pour mettre en œuvre toute aide ou action relative à la prévention ou à la prise en charge des situations de fragilité, au développement social, à l'accueil des jeunes enfants et à l'autonomie des personnes. Il est également compétent pour faciliter l'accès aux droits et aux services des publics dont il a la charge.</p>
+                <br>
+                <p>Il a compétence pour promouvoir les solidarités, la cohésion territoriale et l'accès aux soins de proximité sur le territoire départemental, dans le respect de l'intégrité, de l'autonomie et des attributions des régions et des communes.</p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.06);">
+                    <div>
+                        <p style="color: #4a4a4a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">SIRET</p>
+                        <p style="color: #0a0a0a; font-size: 15px; font-family: 'Manrope', sans-serif;">227 806 460 00019</p>
+                    </div>
+                    <div>
+                        <p style="color: #4a4a4a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Budget annuel</p>
+                        <p style="color: #0a0a0a; font-size: 15px; font-weight: 600;">1,576 milliard €</p>
+                    </div>
+                    <div>
+                        <p style="color: #4a4a4a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Effectif</p>
+                        <p style="color: #0a0a0a; font-size: 15px; font-weight: 600;">~ 2 000 agents</p>
+                    </div>
+                    <div>
+                        <p style="color: #4a4a4a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Siège</p>
+                        <p style="color: #0a0a0a; font-size: 15px;">Versailles (78)</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06);">
+                    <p style="color: #4a4a4a; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Principaux services</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <span class="bts-tag">Action sociale & solidarité</span>
+                        <span class="bts-tag">Éducation & collèges</span>
+                        <span class="bts-tag">Aménagement & routes</span>
+                        <span class="bts-tag">Environnement</span>
+                        <span class="bts-tag">Culture & sport</span>
+                        <span class="bts-tag">Ressources humaines</span>
+                        <span class="bts-tag">Finances</span>
+                        <span class="bts-tag" style="border-color: rgba(220,38,38,0.5); color: #991b1b; font-weight: 600;">Direction des Systèmes d'Information (DSI)</span>
+                    </div>
+                    <p style="color: #6b6b6b; font-size: 14px; margin-top: 15px; font-weight: 300;">Je suis rattaché à la <strong style="color: #991b1b;">Direction des Systèmes d'Information (DSI)</strong>, en charge de l'administration, la maintenance et la sécurisation de l'ensemble du parc informatique du département.</p>
+                </div>
+            </div>
+
+            <h3 class="reveal" style="font-size: 24px; margin-bottom: 30px; color: #0a0a0a;">Mes missions au sein de la DSI</h3>
+
+            <div class="grid-2 reveal">
+                <div class="mission-card">
+                    
+                    <h4>Gestion des incidents</h4>
+                    <p>Lorsque les collaborateurs rencontrent des problèmes techniques, ils ouvrent des tickets via le système de ticketing. Je prends en charge ces tickets, analyse les problèmes signalés et apporte des solutions appropriées. Cela peut inclure la résolution de bugs logiciels, le dépannage matériel, et la réinitialisation des mots de passe.</p>
+                </div>
+                <div class="mission-card">
+                    
+                    <h4>Maintenance préventive</h4>
+                    <p>Utilisation du système de ticketing pour planifier et effectuer des opérations de maintenance régulières. Cela inclut les mises à jour des logiciels, la vérification des systèmes de sécurité, et la gestion des sauvegardes pour prévenir toute perte de données. L'objectif est de minimiser les interruptions de service.</p>
+                </div>
+                <div class="mission-card">
+                    
+                    <h4>Support utilisateur</h4>
+                    <p>En plus de résoudre les incidents, j'assiste les collaborateurs dans l'utilisation des outils et des applications. Je peux organiser des sessions de formation, répondre aux questions fréquentes et fournir des conseils pour optimiser l'utilisation des ressources informatiques.</p>
+                </div>
+                <div class="mission-card">
+                    
+                    <h4>Optimisation des outils</h4>
+                    <p>J'assure et optimise l'efficacité de nos collaborateurs en simplifiant l'utilisation de leurs outils, ce qui leur permet de se concentrer sur leurs tâches essentielles sans être freinés par des contraintes techniques, et j'assure le bon fonctionnement du département.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="competences">
+            <h2 class="section-title reveal">Compétences E5</h2>
+            <p class="reveal" style="color: #4a4a4a; font-size: 16px; margin-bottom: 40px; font-weight: 300; max-width: 800px;">
+                Structuration de mes compétences selon les 6 blocs du référentiel BTS SIO — Épreuve E5 « Support et mise à disposition de services informatiques ». Chaque bloc regroupe les compétences attendues et les réalisations associées issues de ma formation et de mon alternance.
+            </p>
+
+            <div class="e5-intro-box reveal">
+                <h3>Objectif de l'épreuve</h3>
+                <p>L'épreuve E5 évalue l'acquisition des compétences du bloc « Support et mise à disposition de services informatiques » du référentiel BTS SIO. Elle repose sur les réalisations du dossier numérique et un entretien avec le jury.</p>
+                <div class="e5-modalites">
+                    <div class="e5-modalite">
+                        <strong>Forme</strong>
+                        <span>Ponctuelle orale</span>
+                    </div>
+                    <div class="e5-modalite">
+                        <strong>Durée</strong>
+                        <span>40 minutes</span>
+                    </div>
+                    <div class="e5-modalite">
+                        <strong>Phase 1 — 10 min</strong>
+                        <span>Présentation du parcours de professionnalisation</span>
+                    </div>
+                    <div class="e5-modalite">
+                        <strong>Phase 2 — 30 min</strong>
+                        <span>Échange avec le jury sur les réalisations</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blocs-grid">
+
+                <article class="bloc open reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)">
+                        <div class="bloc-num">01</div>
+                        <div class="bloc-title-wrap">
+                            <div class="bloc-title">Gérer le patrimoine informatique</div>
+                            <div class="bloc-category">Inventaire · Habilitations · Continuité</div>
+                        </div>
+                        <div class="bloc-toggle">+</div>
+                    </header>
+                    <div class="bloc-body">
+                        <div class="bloc-body-inner">
+                            <div class="bloc-subtitle">Compétences attendues</div>
+                            <ul class="bloc-skills">
+                                <li>Recenser et identifier les ressources numériques</li>
+                                <li>Exploiter les référentiels, normes et standards adoptés</li>
+                                <li>Mettre en place et vérifier les niveaux d'habilitation associés à un service</li>
+                                <li>Vérifier les conditions de la continuité d'un service informatique</li>
+                                <li>Gérer les sauvegardes et les restaurations</li>
+                                <li>Vérifier le respect des règles d'utilisation des ressources</li>
+                            </ul>
+                            <div class="bloc-subtitle">Réalisations associées</div>
+                            <div class="bloc-real-grid">
+                                <a href="Recenser_et_identifier_les_ressources_numériques_GLPI_Agent__1_.pdf" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge">PDF</span>
+                                    <span class="bloc-real-text">Recensement ressources — GLPI Agent</span>
+                                </a>
+                                <a href="https://de06842a-5c4c-49cf-9b6b-637ac29a1c10.filesusr.com/ugd/d3de47_8decd65c812340639143ee1766ae929f.docx?dn=Documentation%20Windows%20Server.docx" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Projet GLPI — parc informatique</span>
+                                </a>
+                                <a href="Mise_en_place_d_une_authentification_centralisée___2_.pdf" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge">PDF</span>
+                                    <span class="bloc-real-text">Habilitations AD ↔ GLPI (LDAP)</span>
+                                </a>
+                                <a href="Mission7_CompteRendu_Complet.docx" download class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Mission 7 — Gestion parc StadiumCompany</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)">
+                        <div class="bloc-num">02</div>
+                        <div class="bloc-title-wrap">
+                            <div class="bloc-title">Répondre aux incidents et aux demandes d'assistance et d'évolution</div>
+                            <div class="bloc-category">Helpdesk · Tickets · Support utilisateur</div>
+                        </div>
+                        <div class="bloc-toggle">+</div>
+                    </header>
+                    <div class="bloc-body">
+                        <div class="bloc-body-inner">
+                            <div class="bloc-subtitle">Compétences attendues</div>
+                            <ul class="bloc-skills">
+                                <li>Collecter, suivre et orienter des demandes</li>
+                                <li>Traiter des demandes concernant les services réseau et système</li>
+                                <li>Traiter des demandes concernant les applications</li>
+                            </ul>
+                            <div class="bloc-subtitle">Réalisations associées</div>
+                            <div class="bloc-real-grid">
+                                <a href="Mission7_CompteRendu_Complet.docx" download class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Mission 7 — Helpdesk GLPI (SLA, ITIL)</span>
+                                </a>
+                                <a href="#entreprise" class="bloc-real-link">
+                                    <span class="bloc-real-badge internal">DSI</span>
+                                    <span class="bloc-real-text">Gestion incidents — ticketing département</span>
+                                </a>
+                                <a href="#entreprise" class="bloc-real-link">
+                                    <span class="bloc-real-badge internal">DSI</span>
+                                    <span class="bloc-real-text">Support utilisateur — DSI département</span>
+                                </a>
+                                <a href="#entreprise" class="bloc-real-link">
+                                    <span class="bloc-real-badge internal">DSI</span>
+                                    <span class="bloc-real-text">Maintenance préventive</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)">
+                        <div class="bloc-num">03</div>
+                        <div class="bloc-title-wrap">
+                            <div class="bloc-title">Développer la présence en ligne de l'organisation</div>
+                            <div class="bloc-category">Web · RGPD · Analytics</div>
+                        </div>
+                        <div class="bloc-toggle">+</div>
+                    </header>
+                    <div class="bloc-body">
+                        <div class="bloc-body-inner">
+                            <div class="bloc-subtitle">Compétences attendues</div>
+                            <ul class="bloc-skills">
+                                <li>Participer à la valorisation de l'image de l'organisation sur les médias numériques</li>
+                                <li>Référencer les services en ligne de l'organisation et mesurer leur visibilité</li>
+                                <li>Participer à l'évolution d'un site Web exploitant les données de l'organisation</li>
+                            </ul>
+                            <div class="bloc-subtitle">Réalisations associées</div>
+                            <div class="bloc-real-grid">
+                                <a href="Documentation_Presence_En_Ligne.docx" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Site web StadiumCompany (HTML/CSS)</span>
+                                </a>
+                                <a href="https://sofianb78.github.io/bajou/" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge link">WEB</span>
+                                    <span class="bloc-real-text">Site personnel (GitHub Pages)</span>
+                                </a>
+                                <a href="Documentation_Presence_En_Ligne.docx" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Conformité RGPD — cookies, mentions légales</span>
+                                </a>
+                                <a href="Documentation_Presence_En_Ligne.docx" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Mesure d'audience — Matomo</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)">
+                        <div class="bloc-num">04</div>
+                        <div class="bloc-title-wrap">
+                            <div class="bloc-title">Travailler en mode projet</div>
+                            <div class="bloc-category">Planification · Cahier des charges · Suivi</div>
+                        </div>
+                        <div class="bloc-toggle">+</div>
+                    </header>
+                    <div class="bloc-body">
+                        <div class="bloc-body-inner">
+                            <div class="bloc-subtitle">Compétences attendues</div>
+                            <ul class="bloc-skills">
+                                <li>Analyser les objectifs et les modalités d'organisation d'un projet</li>
+                                <li>Planifier les activités</li>
+                                <li>Évaluer les indicateurs de suivi d'un projet et analyser les écarts</li>
+                            </ul>
+                            <div class="bloc-subtitle">Réalisations associées</div>
+                            <div class="bloc-real-grid">
+                                <a href="Mission_5_Sécurisation_de_l_accès_à_Internet_et_mise_en_place_d_une_DMZ.pdf" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge">PDF</span>
+                                    <span class="bloc-real-text">Mission 5 — Projet DMZ pfSense</span>
+                                </a>
+                                <a href="Mission7_CompteRendu_Complet.docx" download class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Mission 7 — Déploiement helpdesk complet</span>
+                                </a>
+                                <a href="https://de06842a-5c4c-49cf-9b6b-637ac29a1c10.filesusr.com/ugd/d3de47_4df5e13c9a754a449a2f8a80a2bf2c48.docx?dn=1-installation%20pfsense.docx" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Projet pfSense — pare-feu StadiumCompany</span>
+                                </a>
+                                <a href="https://de06842a-5c4c-49cf-9b6b-637ac29a1c10.filesusr.com/ugd/d3de47_688a1f8148924357b7f793b44a35201d.docx?dn=Proc%C3%A9dure%20AD-DHCP-DNS%20(2).docx" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Projet AD/DHCP/DNS — infrastructure</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)">
+                        <div class="bloc-num">05</div>
+                        <div class="bloc-title-wrap">
+                            <div class="bloc-title">Mettre à disposition des utilisateurs un service informatique</div>
+                            <div class="bloc-category">Déploiement · Tests · Accompagnement</div>
+                        </div>
+                        <div class="bloc-toggle">+</div>
+                    </header>
+                    <div class="bloc-body">
+                        <div class="bloc-body-inner">
+                            <div class="bloc-subtitle">Compétences attendues</div>
+                            <ul class="bloc-skills">
+                                <li>Réaliser les tests d'intégration et d'acceptation d'un service</li>
+                                <li>Déployer un service</li>
+                                <li>Accompagner les utilisateurs dans la mise en place d'un service</li>
+                            </ul>
+                            <div class="bloc-subtitle">Réalisations associées</div>
+                            <div class="bloc-real-grid">
+                                <a href="https://de06842a-5c4c-49cf-9b6b-637ac29a1c10.filesusr.com/ugd/d3de47_688a1f8148924357b7f793b44a35201d.docx?dn=Proc%C3%A9dure%20AD-DHCP-DNS%20(2).docx" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Déploiement Active Directory, DHCP, DNS</span>
+                                </a>
+                                <a href="https://de06842a-5c4c-49cf-9b6b-637ac29a1c10.filesusr.com/ugd/d3de47_8decd65c812340639143ee1766ae929f.docx?dn=Documentation%20Windows%20Server.docx" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Mise en place serveur Apache</span>
+                                </a>
+                                <a href="Mise_en_place_d_une_authentification_centralisée___2_.pdf" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge">PDF</span>
+                                    <span class="bloc-real-text">Authentification centralisée AD ↔ GLPI</span>
+                                </a>
+                                <a href="Mission_5_Sécurisation_de_l_accès_à_Internet_et_mise_en_place_d_une_DMZ.pdf" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge">PDF</span>
+                                    <span class="bloc-real-text">Déploiement Apache en zone DMZ</span>
+                                </a>
+                                <a href="Mission7_CompteRendu_Complet.docx" download class="bloc-real-link">
+                                    <span class="bloc-real-badge doc">DOC</span>
+                                    <span class="bloc-real-text">Déploiement hMailServer + collecteur GLPI</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)">
+                        <div class="bloc-num">06</div>
+                        <div class="bloc-title-wrap">
+                            <div class="bloc-title">Organiser son développement professionnel</div>
+                            <div class="bloc-category">Veille · Identité pro · Projet de formation</div>
+                        </div>
+                        <div class="bloc-toggle">+</div>
+                    </header>
+                    <div class="bloc-body">
+                        <div class="bloc-body-inner">
+                            <div class="bloc-subtitle">Compétences attendues</div>
+                            <ul class="bloc-skills">
+                                <li>Mettre en place son environnement d'apprentissage personnel</li>
+                                <li>Mettre en œuvre des outils et stratégies de veille informationnelle</li>
+                                <li>Gérer son identité professionnelle</li>
+                                <li>Développer son projet professionnel</li>
+                            </ul>
+                            <div class="bloc-subtitle">Réalisations associées</div>
+                            <div class="bloc-real-grid">
+                                <a href="#veille" class="bloc-real-link">
+                                    <span class="bloc-real-badge internal">#</span>
+                                    <span class="bloc-real-text">Veille — Zero Trust &amp; sécurisation des accès</span>
+                                </a>
+                                <a href="#tableau" class="bloc-real-link">
+                                    <span class="bloc-real-badge internal">#</span>
+                                    <span class="bloc-real-text">Tableau de synthèse E5</span>
+                                </a>
+                                <a href="E5-Tableau-Bajou-filled.xlsx" download class="bloc-real-link">
+                                    <span class="bloc-real-badge xls">XLSX</span>
+                                    <span class="bloc-real-text">Tableau E5 (Annexe 8-1) — téléchargement</span>
+                                </a>
+                                <a href="http://www.linkedin.com/in/sofian-bajou" target="_blank" class="bloc-real-link">
+                                    <span class="bloc-real-badge link">WEB</span>
+                                    <span class="bloc-real-text">Identité professionnelle — LinkedIn</span>
+                                </a>
+                                <a href="#profil" class="bloc-real-link">
+                                    <span class="bloc-real-badge internal">#</span>
+                                    <span class="bloc-real-text">Projet de formation — BTS SIO SISR alternance</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <section id="realisations">
+            <h2 class="section-title reveal">Mes Réalisations</h2>
+            <p class="reveal" style="color: #4a4a4a; font-size: 16px; margin-bottom: 50px; font-weight: 300; max-width: 700px;">Voici les projets et réalisations professionnelles que j'ai menés dans le cadre de mon BTS SIO SISR, aussi bien en cours qu'au sein du projet StadiumCompany.</p>
+
+            <div class="grid-2 reveal">
+                <div class="realisation-card">
+                    <span class="realisation-tag">Web</span>
+                    <h3>Création de projet web</h3>
+                    <p>J'ai créé un site web en le codant moi-même, avec un design simple et facile à utiliser. Ce projet m'a permis d'apprendre à organiser les pages, à rendre le site pratique pour les visiteurs et à comprendre les bases du fonctionnement d'un site internet.</p>
+                    <a href="https://sofianb78.github.io/bajou/" target="_blank" class="realisation-link">Voir le site →</a>
+                </div>
+
+                <div class="realisation-card">
+                    <span class="realisation-tag">ITSM</span>
+                    <h3>Projet GLPI</h3>
+                    <p>Installation de GLPI pour gérer un parc informatique. Connexion de GLPI à GLPI Inventory pour récupérer automatiquement les infos des machines. Liaison à un serveur Windows pour l'authentification des utilisateurs. Création de tickets pour simuler des incidents informatiques.</p>
+                    <a href="https://de06842a-5c4c-49cf-9b6b-637ac29a1c10.filesusr.com/ugd/d3de47_8decd65c812340639143ee1766ae929f.docx?dn=Documentation%20Windows%20Server.docx" target="_blank" class="realisation-link">Documentation →</a>
+                </div>
+
+                <div class="realisation-card">
+                    <span class="realisation-tag">Windows Server</span>
+                    <h3>Active Directory, DHCP, DNS</h3>
+                    <p>Déploiement sous Windows Server 2022 d'une infrastructure complète comprenant Active Directory, DNS et DHCP. Active Directory assure la gestion centralisée des utilisateurs et des postes, le DNS garantit une résolution de noms fiable, et le DHCP automatise l'attribution des adresses IP.</p>
+                    <a href="https://de06842a-5c4c-49cf-9b6b-637ac29a1c10.filesusr.com/ugd/d3de47_688a1f8148924357b7f793b44a35201d.docx?dn=Proc%C3%A9dure%20AD-DHCP-DNS%20(2).docx" target="_blank" class="realisation-link">Documentation →</a>
+                </div>
+
+                <div class="realisation-card">
+                    <span class="realisation-tag">Réseau</span>
+                    <h3>Installation de pfSense</h3>
+                    <p>pfSense est un pare-feu et routeur open-source qui permet de sécuriser et gérer un réseau de façon simple et fiable. Il offre des fonctions essentielles comme le filtrage, le routage, le VPN et le DHCP, le tout via une interface web intuitive. Solution professionnelle et performante.</p>
+                    <a href="https://de06842a-5c4c-49cf-9b6b-637ac29a1c10.filesusr.com/ugd/d3de47_4df5e13c9a754a449a2f8a80a2bf2c48.docx?dn=1-installation%20pfsense.docx" target="_blank" class="realisation-link">Documentation →</a>
+                </div>
+
+                <div class="realisation-card" style="grid-column: 1 / -1;">
+                    <span class="realisation-tag">Serveur Web</span>
+                    <h3>Mise en place d'Apache</h3>
+                    <p>Apache est un serveur web qui permet de mettre en ligne des sites et des applications simplement. Il sert les pages aux utilisateurs, gère les connexions et peut être adapté à presque tous les besoins grâce à sa grande flexibilité. C'est une solution fiable, facile à configurer et largement utilisée pour héberger des sites en entreprise comme en formation.</p>
+                    <a href="https://de06842a-5c4c-49cf-9b6b-637ac29a1c10.filesusr.com/ugd/d3de47_8decd65c812340639143ee1766ae929f.docx?dn=Documentation%20Windows%20Server.docx" target="_blank" class="realisation-link">Documentation →</a>
+                </div>
+
+                <div class="realisation-card">
+                    <span class="realisation-tag">ITSM / Inventaire</span>
+                    <h3>Recensement des ressources numériques avec GLPI Agent</h3>
+                    <p>Mise en place d'un serveur GLPI sur Debian pour centraliser l'inventaire du parc informatique de StadiumCompany. Installation et configuration du GLPI Agent 1.15 sur les postes Windows (serveur et clients) pour la remontée automatique des informations matérielles, logicielles et réseau. Vérification de l'inventaire natif GLPI 10 et validation de la remontée des données dans le module Parc.</p>
+                    <p style="margin-top: 10px;"><strong style="color: rgba(255,255,255,0.6); font-size: 12px;">Compétence E5 : Recenser et identifier les ressources numériques — Gérer le patrimoine informatique</strong></p>
+                    <a href="Recenser_et_identifier_les_ressources_numériques_GLPI_Agent__1_.pdf" target="_blank" class="realisation-link">Documentation →</a>
+                </div>
+
+                <div class="realisation-card">
+                    <span class="realisation-tag">Active Directory / LDAP</span>
+                    <h3>Authentification centralisée et gestion des habilitations</h3>
+                    <p>Mise en place d'une authentification centralisée entre Active Directory et GLPI via LDAP. Création de groupes de sécurité (GLPI_Users, GLPI_Tech, GLPI_Admin) et de profils GLPI avec des niveaux d'habilitation différenciés. Configuration des règles d'affectation LDAP pour l'attribution automatique des droits selon le groupe AD. Tests de validation des accès pour chaque profil (administrateur, technicien, utilisateur).</p>
+                    <p style="margin-top: 10px;"><strong style="color: rgba(255,255,255,0.6); font-size: 12px;">Compétence E5 : Mettre en place et vérifier les niveaux d'habilitation associés à un service</strong></p>
+                    <a href="Mise_en_place_d_une_authentification_centralisée___2_.pdf" target="_blank" class="realisation-link">Documentation →</a>
+                </div>
+
+                <div class="realisation-card">
+                    <span class="realisation-tag">Web / HTML & CSS</span>
+                    <h3>Site web StadiumCompany</h3>
+                    <p>Conception et développement d'un site web codé à la main en HTML et CSS pour améliorer la communication de StadiumCompany auprès du public (supporters, partenaires, visiteurs). Création des pages Accueil, À propos, Actualités et Contact, avec une section dédiée aux actualités du stade (annonces d'événements, matchs, nouveautés). Conformité légale assurée : mentions légales, politique de confidentialité RGPD, gestion des cookies et mesure d'audience avec Matomo.</p>
+                    <p style="margin-top: 10px;"><strong style="color: rgba(255,255,255,0.6); font-size: 12px;">Compétences E5 : Développer la présence en ligne — Conformité légale et RGPD</strong></p>
+                    <a href="Documentation_Presence_En_Ligne.docx" target="_blank" class="realisation-link">Documentation →</a>
+                </div>
+
+                <div class="realisation-card">
+                    <span class="realisation-tag">Réseau / Sécurité</span>
+                    <h3>Mission 5 — Sécurisation Internet & DMZ</h3>
+                    <p>Mise en place d'une architecture réseau sécurisée avec pfSense (3 interfaces : WAN, LAN 172.20.0.0/24, DMZ 172.20.1.0/24). Déploiement d'un serveur web Apache sur Debian 12 en zone DMZ pour exposer le site de StadiumCompany sans compromettre le réseau interne. Configuration des règles de filtrage pare-feu, activation du DHCP sur la DMZ, et validation par des tests d'isolation entre les zones LAN et DMZ.</p>
+                    <p style="margin-top: 10px;"><strong style="color: rgba(255,255,255,0.6); font-size: 12px;">Compétences E5 : Sécuriser les échanges — Mettre en place une architecture réseau sécurisée — Déployer un service dans une DMZ</strong></p>
+                    <a href="Mission_5_Sécurisation_de_l_accès_à_Internet_et_mise_en_place_d_une_DMZ.pdf" target="_blank" class="realisation-link">Documentation →</a>
+                </div>
+
+                <div class="realisation-card" style="grid-column: 1 / -1;">
+                    <span class="realisation-tag">ITSM / Helpdesk</span>
+                    <h3>Mission 7 — Gestion du parc informatique et mise en place d'un helpdesk</h3>
+                    <p>Configuration complète de GLPI pour la gestion du parc et le helpdesk de StadiumCompany. Inventaire automatique via GLPI Agent 1.15, création de 15 catégories ITIL hiérarchisées (Réseau, Matériel, Logiciel, Droits/Accès, Messagerie, Besoin spécifique), mise en place de 4 niveaux de services SLA (Critique 4h, Haute 8h, Moyenne 24h, Basse 48h), activation des notifications par courriel, installation du serveur de messagerie hMailServer et configuration du collecteur mail GLPI pour la création automatique de tickets depuis <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee9d9b9e9e819c9aae9d9a8f8a879b838d81839e8f8097c08d8183">[email&#160;protected]</a>.</p>
+                    <p style="margin-top: 10px;"><strong style="color: rgba(255,255,255,0.6); font-size: 12px;">Compétences E5 : Recenser et identifier les ressources numériques — Collecter, suivre et orienter des demandes — Traiter des incidents — Mettre à disposition un service informatique</strong></p>
+                    <a href="Mission7_CompteRendu_Complet.docx" download class="realisation-link">Compte rendu complet →</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="veille">
+            <h2 class="section-title reveal">Veille Technologique</h2>
+
+            <div class="veille-intro reveal">
+                <p>La veille technologique, composante de la veille stratégique, consiste à observer en continu les avancées techniques et les innovations dans un domaine d'activité spécifique. Elle englobe la surveillance, la collecte, l'analyse, le partage et la diffusion d'informations relatives aux évolutions en matière de recherche, développement, brevets, nouveaux produits, matériaux, procédés et concepts. Son objectif est de permettre aux organisations d'anticiper les changements et d'adapter leur stratégie en conséquence.</p>
+            </div>
+
+            <div class="veille-theme reveal">
+                <h3>Sujet — Zero Trust & Sécurisation des accès</h3>
+                <p>"Comment le modèle Zero Trust redéfinit-il la sécurité des infrastructures d'entreprise ?"</p>
+            </div>
+
+            <div class="reveal">
+                <h3 class="veille-section-title">Mes <span>ressources</span></h3>
+                <div class="source-list">
+                    <a href="https://www.cert.ssi.gouv.fr/" target="_blank" class="source-tag">CERT-FR (ANSSI)</a>
+                    <a href="https://www.nist.gov/publications/zero-trust-architecture" target="_blank" class="source-tag">NIST SP 800-207</a>
+                    <a href="https://thehackernews.com/" target="_blank" class="source-tag">The Hacker News</a>
+                    <a href="https://www.lemagit.fr/" target="_blank" class="source-tag">LeMagIT</a>
+                    <a href="https://www.zdnet.fr/" target="_blank" class="source-tag">ZDNet France</a>
+                    <a href="https://www.youtube.com/@NetworkChuck" target="_blank" class="source-tag">NetworkChuck</a>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <h3 class="veille-section-title">Qu'est-ce que le <span>Zero Trust</span> ?</h3>
+
+                <div class="veille-card">
+                    <h4>Le principe : "Never trust, always verify"</h4>
+                    <p>Le modèle Zero Trust repose sur une idée simple mais révolutionnaire : <span class="highlight">ne faire confiance à personne par défaut</span>, même aux utilisateurs et appareils déjà présents sur le réseau interne de l'entreprise. Chaque demande d'accès à une ressource doit être vérifiée, authentifiée et autorisée, quel que soit son point d'origine.</p>
+                    <p>Cette approche rompt avec le modèle traditionnel du "château fort" : un périmètre sécurisé à l'extérieur (le pare-feu) et une confiance implicite à l'intérieur. Dans un monde où le télétravail, le cloud et les appareils mobiles sont omniprésents, ce périmètre n'existe plus.</p>
+                </div>
+
+                <div class="veille-card">
+                    <h4>Les 3 piliers du Zero Trust selon le NIST</h4>
+                    <p><span class="highlight">Vérifier explicitement :</span> authentifier et autoriser chaque accès en fonction de multiples signaux (identité, localisation, santé de l'appareil, comportement).</p>
+                    <p><span class="highlight">Appliquer le moindre privilège :</span> donner à chaque utilisateur uniquement les accès strictement nécessaires à sa tâche, et pour une durée limitée.</p>
+                    <p><span class="highlight">Supposer la compromission :</span> partir du principe qu'une brèche existe déjà, segmenter le réseau, chiffrer les communications et surveiller en permanence.</p>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <h3 class="veille-section-title">Pourquoi ce modèle <span>s'impose</span> aujourd'hui</h3>
+
+                <div class="grid-2">
+                    <div class="veille-card">
+                        <h4>La fin du périmètre traditionnel</h4>
+                        <p>Avec le télétravail massif, le cloud (SaaS, IaaS) et les appareils personnels (BYOD), les ressources de l'entreprise ne sont plus contenues dans un réseau bien défini. Un collaborateur peut accéder à ses outils depuis un café, un train, ou un pays étranger. Le VPN classique ne suffit plus.</p>
+                    </div>
+                    <div class="veille-card">
+                        <h4>L'explosion des cyberattaques</h4>
+                        <p>Les ransomwares (LockBit, BlackCat) et les attaques par compromission de comptes se multiplient. Une fois qu'un attaquant a pénétré le réseau interne, le modèle traditionnel lui laisse un boulevard pour se déplacer latéralement. Zero Trust limite drastiquement ces mouvements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <h3 class="veille-section-title">Les <span>technologies</span> qui mettent en œuvre Zero Trust</h3>
+
+                <div class="veille-card">
+                    <h4>MFA — Authentification multifacteurs</h4>
+                    <p>Base du Zero Trust. Un mot de passe ne suffit plus : il faut y ajouter un deuxième facteur (application mobile, clé physique FIDO2, biométrie). Même si le mot de passe est volé, l'attaquant ne passe pas.</p>
+                </div>
+
+                <div class="veille-card">
+                    <h4>ZTNA — Zero Trust Network Access</h4>
+                    <p>Remplace le VPN classique. Au lieu d'ouvrir l'accès à tout le réseau, ZTNA ne donne accès qu'à l'application demandée, après vérification de l'identité et de l'état de l'appareil. Solutions : <span class="highlight">Cloudflare Access, Zscaler Private Access, Microsoft Entra Private Access</span>.</p>
+                </div>
+
+                <div class="veille-card">
+                    <h4>Microsegmentation du réseau</h4>
+                    <p>Diviser le réseau en micro-zones isolées. Si un attaquant compromet un poste, il ne peut pas se propager librement. Outils : <span class="highlight">VMware NSX, Illumio, Cisco Secure Workload</span>.</p>
+                </div>
+
+                <div class="veille-card">
+                    <h4>EDR — Endpoint Detection and Response</h4>
+                    <p>Surveillance continue de la santé des postes de travail et serveurs. Détecte les comportements anormaux en temps réel. Solutions répandues : <span class="highlight">CrowdStrike Falcon, SentinelOne, Microsoft Defender for Endpoint</span>.</p>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <h3 class="veille-section-title">Exemple concret : <span>mon alternance</span></h3>
+
+                <div class="grid-2">
+                    <div class="veille-card">
+                        <h4>Ce qui existe déjà</h4>
+                        <p>Dans mon entreprise, certains principes du Zero Trust sont déjà en place : <span class="highlight">MFA obligatoire</span> sur les comptes Microsoft 365, <span class="highlight">gestion stricte des habilitations</span> via Active Directory et GLPI, et <span class="highlight">segmentation réseau</span> avec des VLAN et un pare-feu pfSense. Ces briques sont des fondations solides sur lesquelles on peut construire une véritable architecture Zero Trust.</p>
+                    </div>
+                    <div class="veille-card">
+                        <h4>Ce qui peut évoluer</h4>
+                        <p>La prochaine étape pour une DSI moderne consiste à remplacer progressivement le VPN traditionnel par une solution ZTNA, déployer un EDR sur tous les postes pour détecter les comportements anormaux, et généraliser le principe du moindre privilège pour chaque accès. Ce sont des chantiers concrets qui vont occuper les techniciens SISR dans les prochaines années.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="veille-conclusion reveal">
+                <h3>Conclusion</h3>
+                <p>Le Zero Trust n'est pas un produit qu'on achète, c'est une <span style="color: #dc2626; font-weight: 600;">stratégie de sécurité</span> qui se construit progressivement. Il répond à une réalité : les frontières traditionnelles de l'entreprise ont disparu, et la sécurité doit suivre l'utilisateur plutôt que de défendre un périmètre qui n'existe plus.</p>
+                <br>
+                <p>Pour un futur technicien SISR comme moi, c'est une approche incontournable à maîtriser. Les entreprises qui migrent vers ce modèle recherchent des profils capables de configurer les briques techniques (MFA, ZTNA, EDR) tout en comprenant la logique globale de défense en profondeur. C'est une compétence qui fera la différence sur le marché du travail, notamment face à des menaces toujours plus sophistiquées comme les ransomwares ou les attaques de supply chain.</p>
+            </div>
+        </section>
+
+
+        <section id="tableau">
+            <h2 class="section-title reveal">Tableau de Synthèse E5</h2>
+            <div class="card reveal" style="padding: 0; overflow: hidden;">
+                <div class="pdf-viewer">
+                    <iframe src="E5-Tableau-Bajou-filled.pdf#toolbar=1&navpanes=0&view=FitH" title="Tableau de Synthèse E5"></iframe>
+                </div>
+                <div class="pdf-footer">
+                    <a href="E5-Tableau-Bajou-filled.pdf" target="_blank" class="pdf-link">Tableau E5 - Bajou Sofian</a>
+                    <a href="E5-Tableau-Bajou-filled.xlsx" download class="pdf-download">Télécharger</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2 class="section-title reveal">Contact</h2>
+            <div class="contact-grid reveal">
+                <a href="tel:0782214885" class="contact-item">
+                    
+                    <div>
+                        <div class="contact-label">Téléphone</div>
+                        <div class="contact-value">07 82 21 48 85</div>
+                    </div>
+                </a>
+                <a href="http://www.linkedin.com/in/sofian-bajou" target="_blank" class="contact-item">
+                    
+                    <div>
+                        <div class="contact-label">LinkedIn</div>
+                        <div class="contact-value">linkedin.com/in/sofian-bajou</div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            © 2025 par Bajou Sofian. Tous droits réservés.
+        </footer>
+    </main>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Three.js Background
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.z = 5;
+
+        const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
+        const material = new THREE.MeshBasicMaterial({ 
+            color: 0xdc2626, 
+            wireframe: true,
+            transparent: true,
+            opacity: 0.04
+        });
+        const torus = new THREE.Mesh(geometry, material);
+        scene.add(torus);
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 1000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 100;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.05,
+            color: 0x0a0a0a,
+            transparent: true,
+            opacity: 0.25
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            torus.rotation.x += 0.001;
+            torus.rotation.y += 0.002;
+            particlesMesh.rotation.y += 0.0005;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ===== Network Animation (Hero Background) =====
+        const netCanvas = document.getElementById('network-canvas');
+        const netCtx = netCanvas.getContext('2d');
+        let netNodes = [];
+        let netPackets = [];
+
+        function resizeNetCanvas() {
+            const parent = netCanvas.parentElement;
+            const w = parent.offsetWidth || window.innerWidth;
+            const h = parent.offsetHeight || window.innerHeight;
+            netCanvas.width = w;
+            netCanvas.height = h;
+        }
+
+        function initNetwork() {
+            resizeNetCanvas();
+            netNodes = [];
+            netPackets = [];
+            const count = Math.max(25, Math.floor((netCanvas.width * netCanvas.height) / 22000));
+            for (let i = 0; i < count; i++) {
+                netNodes.push({
+                    x: Math.random() * netCanvas.width,
+                    y: Math.random() * netCanvas.height,
+                    vx: (Math.random() - 0.5) * 0.4,
+                    vy: (Math.random() - 0.5) * 0.4,
+                    radius: Math.random() * 2 + 2,
+                    pulse: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        function spawnPacket() {
+            if (netNodes.length < 2) return;
+            const fromIdx = Math.floor(Math.random() * netNodes.length);
+            const candidates = [];
+            for (let i = 0; i < netNodes.length; i++) {
+                if (i === fromIdx) continue;
+                const dx = netNodes[i].x - netNodes[fromIdx].x;
+                const dy = netNodes[i].y - netNodes[fromIdx].y;
+                const d = Math.sqrt(dx * dx + dy * dy);
+                if (d < 200) candidates.push(i);
+            }
+            if (candidates.length === 0) return;
+            const toIdx = candidates[Math.floor(Math.random() * candidates.length)];
+            netPackets.push({
+                from: fromIdx,
+                to: toIdx,
+                progress: 0,
+                speed: Math.random() * 0.012 + 0.006
+            });
+        }
+
+        function drawNetwork() {
+            netCtx.clearRect(0, 0, netCanvas.width, netCanvas.height);
+
+            for (const n of netNodes) {
+                n.x += n.vx;
+                n.y += n.vy;
+                n.pulse += 0.04;
+                if (n.x < 0 || n.x > netCanvas.width) n.vx *= -1;
+                if (n.y < 0 || n.y > netCanvas.height) n.vy *= -1;
+            }
+
+            // connections
+            for (let i = 0; i < netNodes.length; i++) {
+                for (let j = i + 1; j < netNodes.length; j++) {
+                    const dx = netNodes[i].x - netNodes[j].x;
+                    const dy = netNodes[i].y - netNodes[j].y;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    if (d < 180) {
+                        const alpha = (1 - d / 180) * 0.6;
+                        netCtx.strokeStyle = `rgba(248, 113, 113, ${alpha})`;
+                        netCtx.lineWidth = 1.2;
+                        netCtx.beginPath();
+                        netCtx.moveTo(netNodes[i].x, netNodes[i].y);
+                        netCtx.lineTo(netNodes[j].x, netNodes[j].y);
+                        netCtx.stroke();
+                    }
+                }
+            }
+
+            // nodes with glow
+            for (const n of netNodes) {
+                const pulseSize = n.radius + Math.sin(n.pulse) * 1.2;
+                const glow = netCtx.createRadialGradient(n.x, n.y, 0, n.x, n.y, pulseSize * 5);
+                glow.addColorStop(0, 'rgba(220, 38, 38, 0.6)');
+                glow.addColorStop(0.4, 'rgba(220, 38, 38, 0.2)');
+                glow.addColorStop(1, 'rgba(153, 27, 27, 0)');
+                netCtx.fillStyle = glow;
+                netCtx.beginPath();
+                netCtx.arc(n.x, n.y, pulseSize * 5, 0, Math.PI * 2);
+                netCtx.fill();
+
+                netCtx.fillStyle = '#0a0a0a';
+                netCtx.beginPath();
+                netCtx.arc(n.x, n.y, pulseSize, 0, Math.PI * 2);
+                netCtx.fill();
+            }
+
+            // packets
+            for (let i = netPackets.length - 1; i >= 0; i--) {
+                const p = netPackets[i];
+                const from = netNodes[p.from];
+                const to = netNodes[p.to];
+                if (!from || !to) { netPackets.splice(i, 1); continue; }
+                p.progress += p.speed;
+                if (p.progress >= 1) { netPackets.splice(i, 1); continue; }
+                const x = from.x + (to.x - from.x) * p.progress;
+                const y = from.y + (to.y - from.y) * p.progress;
+
+                const trailGrad = netCtx.createRadialGradient(x, y, 0, x, y, 12);
+                trailGrad.addColorStop(0, 'rgba(220, 38, 38, 1)');
+                trailGrad.addColorStop(0.4, 'rgba(220, 38, 38, 0.5)');
+                trailGrad.addColorStop(1, 'rgba(220, 38, 38, 0)');
+                netCtx.fillStyle = trailGrad;
+                netCtx.beginPath();
+                netCtx.arc(x, y, 12, 0, Math.PI * 2);
+                netCtx.fill();
+
+                netCtx.fillStyle = '#dc2626';
+                netCtx.beginPath();
+                netCtx.arc(x, y, 3, 0, Math.PI * 2);
+                netCtx.fill();
+            }
+
+            requestAnimationFrame(drawNetwork);
+        }
+
+        // Wait for layout, then start
+        window.addEventListener('load', () => {
+            initNetwork();
+            drawNetwork();
+            setInterval(spawnPacket, 200);
+        });
+        window.addEventListener('resize', initNetwork);
+
+        // Cursor effect
+        const cursorParticles = [];
+        const maxParticles = 30;
+        let mouseX = 0;
+        let mouseY = 0;
+
+        class CursorParticle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 15 + 5;
+                this.speedX = Math.random() * 4 - 2;
+                this.speedY = Math.random() * 4 - 2;
+                this.life = 100;
+                this.hue = Math.random() * 30;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= 2;
+                this.size *= 0.97;
+            }
+
+            draw(ctx) {
+                ctx.save();
+                ctx.globalAlpha = (this.life / 100) * 0.7;
+                const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                gradient.addColorStop(0, `hsla(${this.hue}, 85%, 50%, 1)`);
+                gradient.addColorStop(0.5, `hsla(${this.hue}, 85%, 45%, 0.4)`);
+                gradient.addColorStop(1, `hsla(${this.hue}, 85%, 35%, 0)`);
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const cursorCanvas = document.createElement('canvas');
+        cursorCanvas.style.position = 'fixed';
+        cursorCanvas.style.top = '0';
+        cursorCanvas.style.left = '0';
+        cursorCanvas.style.width = '100%';
+        cursorCanvas.style.height = '100%';
+        cursorCanvas.style.pointerEvents = 'none';
+        cursorCanvas.style.zIndex = '9999';
+        document.body.appendChild(cursorCanvas);
+
+        const ctx = cursorCanvas.getContext('2d');
+        cursorCanvas.width = window.innerWidth;
+        cursorCanvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            cursorCanvas.width = window.innerWidth;
+            cursorCanvas.height = window.innerHeight;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            for (let i = 0; i < 2; i++) {
+                if (cursorParticles.length < maxParticles) {
+                    cursorParticles.push(new CursorParticle(mouseX, mouseY));
+                }
+            }
+        });
+
+        function animateCursor() {
+            ctx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+
+            ctx.save();
+            const cursorGradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 30);
+            cursorGradient.addColorStop(0, 'rgba(220, 38, 38, 0.25)');
+            cursorGradient.addColorStop(0.5, 'rgba(220, 38, 38, 0.1)');
+            cursorGradient.addColorStop(1, 'rgba(220, 38, 38, 0)');
+            ctx.fillStyle = cursorGradient;
+            ctx.beginPath();
+            ctx.arc(mouseX, mouseY, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            for (let i = cursorParticles.length - 1; i >= 0; i--) {
+                cursorParticles[i].update();
+                cursorParticles[i].draw(ctx);
+
+                if (cursorParticles[i].life <= 0) {
+                    cursorParticles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animateCursor);
+        }
+
+        animateCursor();
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // BTS Tabs
+        function showBtsTab(tabId) {
+            document.querySelectorAll('.bts-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.bts-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Scroll Reveal
+        document.body.classList.add('js-ready');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Active nav link on scroll
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (window.pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (current && link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Blocs Compétences E5 - Accordéon
+        function toggleBloc(head) {
+            const bloc = head.parentElement;
+            bloc.classList.toggle('open');
+        }
+        
+        document.querySelectorAll('.bloc-head').forEach(h => {
+            h.setAttribute('tabindex', '0');
+            h.setAttribute('role', 'button');
+            h.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleBloc(h);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
