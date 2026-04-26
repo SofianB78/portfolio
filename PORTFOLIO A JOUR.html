@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sofian Bajou - Portfolio BTS SIO SISR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Manrope', sans-serif; background: #f5f1ea; color: #0a0a0a; overflow-x: hidden; }
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        nav { position: fixed; left: 0; top: 0; width: 100%; height: 70px; background: rgba(245, 241, 234, 0.95); backdrop-filter: blur(10px); border-bottom: 2px solid rgba(10, 10, 10, 0.08); z-index: 1000; display: flex; align-items: center; padding: 0 30px; gap: 30px; }
+        .logo { width: 45px; height: 45px; background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; box-shadow: 0 0 20px rgba(220, 38, 38, 0.5); color: #0a0a0a; flex-shrink: 0; }
+        .nav-links { display: flex; gap: 5px; flex: 1; justify-content: center; }
+        .nav-link { color: #0a0a0a; text-decoration: none; padding: 10px 18px; transition: all 0.3s ease; position: relative; white-space: nowrap; font-size: 14px; }
+        .nav-link::before { content: ''; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 0; height: 3px; background: linear-gradient(90deg, #dc2626, #991b1b); transition: width 0.3s ease; }
+        .nav-link:hover::before, .nav-link.active::before { width: 80%; }
+        .social-links { display: flex; gap: 10px; margin-left: auto; }
+        .social-link { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #0a0a0a; transition: all 0.3s ease; border-radius: 50%; text-decoration: none; }
+        .social-link:hover { background: rgba(10, 10, 10, 0.08); transform: scale(1.1); }
+        main { margin-top: 70px; position: relative; z-index: 1; }
+        section { min-height: 100vh; padding: 100px 80px; position: relative; }
+        #hero { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; overflow: hidden; }
+        #network-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .hero-content { position: relative; z-index: 2; }
+        .hero-content h1 { font-family: 'Anton', sans-serif; font-size: 120px; line-height: 0.95; text-transform: uppercase; margin-bottom: 20px; }
+        .hero-content h2 { font-size: 28px; letter-spacing: 5px; font-weight: 300; margin-bottom: 30px; text-transform: uppercase; }
+        .hero-content p { font-size: 18px; color: #4a4a4a; max-width: 700px; line-height: 1.8; margin-bottom: 40px; }
+        .cta-button { padding: 15px 40px; background: #f5f1ea; color: #0a0a0a; text-decoration: none; border-radius: 50px; font-weight: 600; box-shadow: 0 4px 20px rgba(220, 38, 38, 0.35); transition: transform 0.3s ease; }
+        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(220, 38, 38, 0.5); }
+        .section-title { font-family: 'Anton', sans-serif; font-size: 56px; margin-bottom: 60px; text-transform: uppercase; position: relative; display: inline-block; }
+        .section-title::after { content: ''; position: absolute; bottom: -10px; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #dc2626, rgba(220, 38, 38, 0.3)); border-radius: 2px; }
+        .card { background: rgba(220, 38, 38, 0.03); border-radius: 20px; padding: 40px; border: 1px solid rgba(0, 255, 255, 0.15); transition: all 0.5s ease; }
+        .card h3 { font-size: 24px; margin-bottom: 20px; }
+        .card p { color: #6b6b6b; line-height: 1.8; font-weight: 300; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .profil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .timeline { position: relative; padding-left: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #dc2626, #991b1b, transparent); }
+        .timeline-item { position: relative; margin-bottom: 35px; padding-left: 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -35px; top: 8px; width: 12px; height: 12px; border-radius: 50%; background: #dc2626; }
+        .timeline-date { font-family: 'Manrope', sans-serif; font-size: 13px; color: rgba(10, 10, 10, 0.75); margin-bottom: 6px; font-weight: 500; }
+        .timeline-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; color: #1a1a1a; }
+        .timeline-school { font-size: 14px; color: #4a4a4a; margin-bottom: 8px; font-weight: 400; }
+        .timeline-desc { font-size: 14px; color: #4a4a4a; line-height: 1.7; font-weight: 300; }
+        .bloc { background: rgba(220, 38, 38, 0.02); border: 1px solid rgba(0, 255, 255, 0.1); border-radius: 20px; margin-bottom: 15px; overflow: hidden; transition: all 0.3s ease;}
+        .bloc-head { padding: 25px; cursor: pointer; display: flex; align-items: center; gap: 20px; background: rgba(220, 38, 38, 0.02); }
+        .bloc-num { font-family: 'Anton'; font-size: 40px; color: #dc2626; min-width: 60px; }
+        .bloc-title { font-weight: 700; font-size: 18px; }
+        .bloc-toggle { margin-left: auto; width: 30px; height: 30px; border-radius: 50%; border: 1px solid #dc2626; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: #dc2626;}
+        .bloc.open .bloc-toggle { transform: rotate(45deg); background: #dc2626; color: white; }
+        .bloc-body { max-height: 0; transition: max-height 0.5s ease-out; }
+        .bloc.open .bloc-body { max-height: 5000px; }
+        .bloc-body-inner { padding: 30px; border-top: 1px solid rgba(220, 38, 38, 0.1); }
+        .bloc-skills { list-style: none; margin-bottom: 30px; }
+        .bloc-skills li { padding: 8px 15px; border-radius: 8px; font-size: 14px; margin-bottom: 5px; transition: all 0.4s ease; border: 1px solid transparent; color: #4a4a4a; }
+        .skill-highlight { background: rgba(220, 38, 38, 0.1) !important; border-color: rgba(220, 38, 38, 0.4) !important; color: #991b1b !important; font-weight: 700 !important; transform: translateX(10px); box-shadow: 0 0 15px rgba(220, 38, 38, 0.2); }
+        .bloc-real-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .bloc-real-card { background: white; border: 1px solid rgba(10, 10, 10, 0.08); padding: 20px; border-radius: 12px; transition: 0.3s; cursor: help; display: flex; flex-direction: column; gap: 10px; }
+        .bloc-real-card:hover { border-color: #dc2626; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .bloc-real-card-header { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+        .bloc-real-card-header h4 { font-size: 14px; line-height: 1.4; word-break: break-word; }
+        .bloc-real-badge { font-size: 10px; font-weight: 700; background: #dc2626; color: white; padding: 4px 8px; border-radius: 4px; white-space: nowrap; }
+        .bloc-real-badge.internal { background: #6b6b6b; }
+        .bloc-real-link-btn { display: inline-block; margin-top: auto; color: #dc2626; text-decoration: none; font-size: 13px; font-weight: bold; }
+        .bloc-real-link-btn:hover { color: #991b1b; }
+        .tableau-container { overflow-x: auto; border-radius: 16px; border: 1px solid rgba(0, 255, 255, 0.15); }
+        .tableau-synthese { width: 100%; border-collapse: collapse; min-width: 1000px; background: white; }
+        .tableau-synthese th { background: #f0f0f0; padding: 15px; font-size: 12px; border: 1px solid #ddd; }
+        .tableau-synthese td { padding: 12px; border: 1px solid #eee; font-size: 13px; text-align: center; color: #6b6b6b;}
+        .tableau-synthese td:first-child { text-align: left; font-weight: 600; color: #1a1a1a;}
+        .tableau-section-header td { background: rgba(220, 38, 38, 0.05) !important; color: #991b1b !important; font-weight: 700 !important; text-align: left !important; }
+        .check-mark { color: #dc2626; font-weight: 800; font-size: 16px; }
+        .pdf-download { padding: 10px 28px; background: #dc2626; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 13px; text-transform: uppercase; transition: transform 0.3s ease; display: inline-block;}
+        .pdf-download:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5); }
+        .reveal { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease, transform 0.8s ease; }
+        body.js-ready .reveal { opacity: 0; transform: translateY(30px); }
+        body.js-ready .reveal.visible { opacity: 1; transform: translateY(0); }
+        footer { text-align: center; padding: 40px; color: #555; font-size: 14px; border-top: 1px solid rgba(10, 10, 10, 0.05); font-weight: 300; }
+        @media (max-width: 768px) { section { padding: 60px 20px; } .hero-content h1 { font-size: 50px; } .grid-2, .grid-3, .profil-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <nav>
+        <div class="logo">SB</div>
+        <div class="nav-links">
+            <a href="#hero" class="nav-link">Accueil</a>
+            <a href="#profil" class="nav-link">Profil</a>
+            <a href="#bts" class="nav-link">BTS SIO</a>
+            <a href="#entreprise" class="nav-link">Entreprise</a>
+            <a href="#competences" class="nav-link">Compétences E5</a>
+            <a href="#veille" class="nav-link">Veille</a>
+            <a href="#tableau" class="nav-link">Tableau E5</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+        <div class="social-links">
+            <a href="http://www.linkedin.com/in/sofian-bajou" target="_blank" class="social-link">in</a>
+            <a href="tel:0782214885" class="social-link">tel</a>
+        </div>
+    </nav>
+
+    <main>
+        <section id="hero">
+            <canvas id="network-canvas"></canvas>
+            <div class="hero-content">
+                <h1>SOFIAN BAJOU</h1>
+                <h2>Étudiant BTS SIO SISR</h2>
+                <p>Bienvenue sur mon portfolio ! Actuellement étudiant à l'ENSITECH, je vous présente mon parcours technique et mes réalisations professionnelles orientées infrastructures et réseaux.</p>
+                <a href="#profil" class="cta-button">Découvrir mon parcours →</a>
+            </div>
+        </section>
+
+        <section id="profil">
+            <h2 class="section-title reveal">Mon Profil</h2>
+            <div class="profil-grid">
+                <div class="card reveal">
+                    <h3>À propos de moi</h3>
+                    <p>Je m'appelle Sofian Bajou, j'ai 23 ans. Actuellement étudiant au sein de l'ENSITECH en première année de BTS SIO SISR (Solutions d'Infrastructures Systèmes et Réseaux).</p>
+                    <br>
+                    <p>Mon parcours académique reflète ma passion pour les sciences et l'informatique. Après avoir obtenu un baccalauréat en mathématiques et physique-chimie, j'ai poursuivi mes études avec une licence en MIASHS. J'ai réorienté mon parcours vers une formation en informatique pour privilégier l'aspect technique et opérationnel plutôt que la théorie pure.</p>
+                    <br>
+                    <p>C'est pourquoi j'ai choisi de me lancer dans un BTS SIO en alternance. Cette décision m'a offert l'opportunité de développer des compétences techniques en informatique tout en les appliquant concrètement en entreprise. Ce parcours m'a permis de renforcer mon expérience et de mieux me préparer aux défis professionnels à venir.</p>
+                </div>
+                <div class="reveal">
+                    <div class="card" style="height: 100%;">
+                        <h3>Formation</h3>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">2024 — 2026</div>
+                                <div class="timeline-title">BTS SIO SISR</div>
+                                <div class="timeline-school">ENSITECH — Montigny-Le-Bretonneux</div>
+                                <div class="timeline-desc">Alternance au Conseil Départemental des Yvelines.</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">2021 — 2023</div>
+                                <div class="timeline-title">Licence MIASHS</div>
+                                <div class="timeline-school">Université de Versailles</div>
+                                <div class="timeline-desc">Mathématiques appliquées aux sciences humaines.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="bts">
+            <h2 class="section-title reveal">Le BTS SIO</h2>
+            <div class="grid-3 reveal" style="margin-bottom: 30px;">
+                <div class="card bts-info-card"><h4>Organisation</h4><p>▸ 2 ans de formation</p><p>▸ Option SISR</p></div>
+                <div class="card bts-info-card"><h4>Programme</h4><p>▸ Cybersécurité</p><p>▸ Réseaux & Systèmes</p></div>
+                <div class="card bts-info-card"><h4>Validation</h4><p>▸ Niveau 5 (Bac+2)</p><p>▸ 120 crédits ECTS</p></div>
+            </div>
+        </section>
+
+        <section id="entreprise">
+            <h2 class="section-title reveal">Mon Entreprise</h2>
+            <div class="card reveal" style="margin-bottom: 40px;">
+                <h3>Conseil Départemental des Yvelines (DSI)</h3>
+                <p>Je suis rattaché à la Direction des Systèmes d'Information. Mon rôle principal est d'assurer le support et la maintenance du parc informatique départemental (~2000 agents).</p>
+                <br>
+                <div class="grid-2">
+                    <div>
+                        <h4 style="color:#991b1b; margin-bottom:10px;">Outil ITSM Professionnel</h4>
+                        <p>J'utilise quotidiennement <strong>EasyVista</strong> pour la gestion des incidents et le suivi des demandes.</p>
+                    </div>
+                    <div>
+                        <h4 style="color:#991b1b; margin-bottom:10px;">Missions Clés</h4>
+                        <p>Migration Windows 11, enrôlement mobile Intune et support de proximité.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="competences">
+            <h2 class="section-title reveal">Compétences E5 & Réalisations</h2>
+            <div class="blocs-grid">
+                
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)"><div class="bloc-num">01</div><div class="bloc-title">Gérer le patrimoine informatique</div><div class="bloc-toggle">+</div></header>
+                    <div class="bloc-body"><div class="bloc-body-inner">
+                        <ul class="bloc-skills">
+                            <li class="s-b1-1">▸ Recenser et identifier les ressources numériques</li>
+                            <li class="s-b1-2">▸ Exploiter des référentiels, normes et standards adoptés par le prestataire</li>
+                            <li class="s-b1-3">▸ Mettre en place et vérifier les niveaux d'habilitation associés à un service</li>
+                            <li class="s-b1-4">▸ Vérifier les conditions de la continuité d'un service informatique</li>
+                            <li class="s-b1-5">▸ Gérer des sauvegardes</li>
+                            <li class="s-b1-6">▸ Vérifier le respect des règles d'utilisation des ressources numériques</li>
+                        </ul>
+                        <div class="bloc-real-grid">
+                            <div class="bloc-real-card" onmouseover="highlight('s-b1-1 s-b1-3 s-b1-6')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Inscription_Android_Intune_BAJOU_Sofian_A</h4><span class="bloc-real-badge internal">DSI</span></div>
+                                <p>Enrôlement mobile et gestion des accès TAP/MFA.</p>
+                                <a href="Documentation_Inscription_Android_Intune_BAJOU_Sofian_A.docx" target="_blank" class="bloc-real-link-btn">Doc Word →</a>
+                            </div>
+                            <div class="bloc-real-card" onmouseover="highlight('s-b1-1')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Ticket_Preparation_BAJOU_Sofian</h4><span class="bloc-real-badge internal">DSI</span></div>
+                                <p>Identification et intégration matérielle dans l'AD et SCCM.</p>
+                                <a href="Documentation_Ticket_Preparation_BAJOU_Sofian.docx" target="_blank" class="bloc-real-link-btn">Doc Word →</a>
+                            </div>
+                        </div>
+                    </div></div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)"><div class="bloc-num">02</div><div class="bloc-title">Répondre aux incidents et demandes</div><div class="bloc-toggle">+</div></header>
+                    <div class="bloc-body"><div class="bloc-body-inner">
+                        <ul class="bloc-skills">
+                            <li class="s-b2-1">▸ Collecter, suivre et orienter des demandes</li>
+                            <li class="s-b2-2">▸ Traiter des demandes concernant les services réseau et système, applicatifs</li>
+                            <li class="s-b2-3">▸ Traiter des demandes concernant les applications</li>
+                        </ul>
+                        <div class="bloc-real-grid">
+                            <div class="bloc-real-card" onmouseover="highlight('s-b2-1 s-b2-2')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Imprimante_IP_BAJOU_Sofian</h4><span class="bloc-real-badge internal">DSI</span></div>
+                                <p>Installation et configuration d'imprimantes réseau via TCP/IP.</p>
+                                <a href="Documentation_Imprimante_IP_BAJOU_Sofian.docx" target="_blank" class="bloc-real-link-btn">Doc Word →</a>
+                            </div>
+                            <div class="bloc-real-card" onmouseover="highlight('s-b2-1 s-b2-2')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Ecran_Targus_BAJOU_Sofian</h4><span class="bloc-real-badge internal">DSI</span></div>
+                                <p>Mise en place de stations d'accueil et configuration multi-écrans.</p>
+                                <a href="Documentation_Ecran_Targus_BAJOU_Sofian.docx" target="_blank" class="bloc-real-link-btn">Doc Word →</a>
+                            </div>
+                            <div class="bloc-real-card" onmouseover="highlight('s-b2-1 s-b2-3')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Renouvellement_Poste_Dragon_BAJOU_SofianBon</h4><span class="bloc-real-badge internal">DSI</span></div>
+                                <p>Réinstallation spécifique de logiciel d'accessibilité Dragon.</p>
+                                <a href="Documentation_Renouvellement_Poste_Dragon_BAJOU_SofianBon.docx" target="_blank" class="bloc-real-link-btn">Doc Word →</a>
+                            </div>
+                        </div>
+                    </div></div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)"><div class="bloc-num">03</div><div class="bloc-title">Développer la présence en ligne</div><div class="bloc-toggle">+</div></header>
+                    <div class="bloc-body"><div class="bloc-body-inner">
+                        <ul class="bloc-skills">
+                            <li class="s-b3-1">▸ Participer à la valorisation de l'image de l'organisation sur les médias numériques</li>
+                            <li class="s-b3-2">▸ Référencer les services en ligne de l'organisation et mesurer leur visibilité</li>
+                            <li class="s-b3-3">▸ Participer à l'évolution d'un site Web exploitant les données de l'organisation</li>
+                        </ul>
+                        <div class="bloc-real-grid">
+                            <div class="bloc-real-card" onmouseover="highlight('s-b3-1 s-b3-2 s-b3-3')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Presence_En_Ligne_1</h4><span class="bloc-real-badge">ECOLE</span></div>
+                                <p>Mise en place du site StadiumCompany avec Matomo et RGPD.</p>
+                                <a href="Documentation_Presence_En_Ligne 1.docx" target="_blank" class="bloc-real-link-btn">Doc Word →</a>
+                            </div>
+                        </div>
+                    </div></div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)"><div class="bloc-num">04</div><div class="bloc-title">Travailler en mode projet</div><div class="bloc-toggle">+</div></header>
+                    <div class="bloc-body"><div class="bloc-body-inner">
+                        <ul class="bloc-skills">
+                            <li class="s-b4-1">▸ Analyser les objectifs et les modalités d'organisation d'un projet</li>
+                            <li class="s-b4-2">▸ Planifier les activités</li>
+                            <li class="s-b4-3">▸ Évaluer les indicateurs de suivi d'un projet et analyser les écarts</li>
+                        </ul>
+                        <div class="bloc-real-grid">
+                            <div class="bloc-real-card" onmouseover="highlight('s-b4-1 s-b4-2')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Migration_W11_BAJOU_SofianB</h4><span class="bloc-real-badge internal">DSI</span></div>
+                                <p>Planification et déploiement hiérarchisé de Windows 11 via SCCM.</p>
+                                <a href="Documentation_Migration_W11_BAJOU_SofianB.docx" target="_blank" class="bloc-real-link-btn">Doc Word →</a>
+                            </div>
+                        </div>
+                    </div></div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)"><div class="bloc-num">05</div><div class="bloc-title">Mettre à disposition un service</div><div class="bloc-toggle">+</div></header>
+                    <div class="bloc-body"><div class="bloc-body-inner">
+                        <ul class="bloc-skills">
+                            <li class="s-b5-1">▸ Réaliser les tests d'intégration et d'acceptation d'un service</li>
+                            <li class="s-b5-2">▸ Déployer un service</li>
+                            <li class="s-b5-3">▸ Accompagner les utilisateurs dans la mise en place d'un service</li>
+                        </ul>
+                        <div class="bloc-real-grid">
+                            <div class="bloc-real-card" onmouseover="highlight('s-b5-1 s-b5-2 s-b5-3')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Imprimante_IP_BAJOU_Sofian</h4><span class="bloc-real-badge internal">DSI</span></div>
+                                <p>Déploiement et tests d'impression pour les agents.</p>
+                                <a href="Documentation_Imprimante_IP_BAJOU_Sofian.docx" target="_blank" class="bloc-real-link-btn">Doc Word →</a>
+                            </div>
+                            <div class="bloc-real-card" onmouseover="highlight('s-b5-1 s-b5-2 s-b5-3')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Ecran_Targus_BAJOU_Sofian</h4><span class="bloc-real-badge internal">DSI</span></div>
+                                <p>Installation physique et configuration logique des stations d'accueil.</p>
+                                <a href="Documentation_Ecran_Targus_BAJOU_Sofian.docx" target="_blank" class="bloc-real-link-btn">Doc Word →</a>
+                            </div>
+                        </div>
+                    </div></div>
+                </article>
+
+                <article class="bloc reveal">
+                    <header class="bloc-head" onclick="toggleBloc(this)"><div class="bloc-num">06</div><div class="bloc-title">Organiser son développement professionnel</div><div class="bloc-toggle">+</div></header>
+                    <div class="bloc-body"><div class="bloc-body-inner">
+                        <ul class="bloc-skills">
+                            <li class="s-b6-1">▸ Mettre en place son environnement d'apprentissage personnel</li>
+                            <li class="s-b6-2">▸ Mettre en œuvre des outils et stratégies de veille informationnelle</li>
+                            <li class="s-b6-3">▸ Gérer son identité professionnelle</li>
+                            <li class="s-b6-4">▸ Développer son projet professionnel</li>
+                        </ul>
+                        <div class="bloc-real-grid">
+                            <div class="bloc-real-card" onmouseover="highlight('s-b6-1 s-b6-2')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Veille Zero Trust</h4><span class="bloc-real-badge internal">#</span></div>
+                                <p>Recherche et documentation continue sur les architectures de sécurité modernes.</p>
+                                <a href="#veille" class="bloc-real-link-btn">Voir la veille →</a>
+                            </div>
+                            <div class="bloc-real-card" onmouseover="highlight('s-b6-4')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Tableau de synthèse E5</h4><span class="bloc-real-badge xls">XLSX</span></div>
+                                <p>Suivi rigoureux des compétences acquises tout au long du BTS et de l'alternance.</p>
+                                <a href="E5-Tableau-Bajou-filled.xlsx" download class="bloc-real-link-btn">Doc Excel →</a>
+                            </div>
+                            <div class="bloc-real-card" onmouseover="highlight('s-b6-3 s-b6-4')" onmouseout="unhighlight()">
+                                <div class="bloc-real-card-header"><h4>Identité Pro (LinkedIn)</h4><span class="bloc-real-badge link">WEB</span></div>
+                                <p>Création de ce site web et optimisation du profil LinkedIn pour le réseautage IT.</p>
+                                <a href="http://www.linkedin.com/in/sofian-bajou" target="_blank" class="bloc-real-link-btn">Voir le profil →</a>
+                            </div>
+                        </div>
+                    </div></div>
+                </article>
+
+            </div>
+        </section>
+
+        <section id="tableau">
+            <h2 class="section-title reveal">Tableau de Synthèse E5</h2>
+            <div class="tableau-container reveal">
+                <table class="tableau-synthese">
+                    <thead><tr><th>Réalisations</th><th>B1</th><th>B2</th><th>B3</th><th>B4</th><th>B5</th><th>B6</th></tr></thead>
+                    <tbody>
+                        <tr class="tableau-section-header"><td colspan="7">Milieu Professionnel (Conseil Départemental 78)</td></tr>
+                        <tr><td>Migration_W11_BAJOU_SofianB</td><td></td><td><span class="check-mark">◈</span></td><td></td><td><span class="check-mark">◈</span></td><td><span class="check-mark">◈</span></td><td></td></tr>
+                        <tr><td>Inscription_Android_Intune_BAJOU_Sofian_A</td><td><span class="check-mark">◈</span></td><td><span class="check-mark">◈</span></td><td></td><td></td><td><span class="check-mark">◈</span></td><td></td></tr>
+                        <tr><td>Imprimante_IP_BAJOU_Sofian</td><td></td><td><span class="check-mark">◈</span></td><td></td><td></td><td><span class="check-mark">◈</span></td><td></td></tr>
+                        <tr><td>Ecran_Targus_BAJOU_Sofian</td><td></td><td><span class="check-mark">◈</span></td><td></td><td></td><td><span class="check-mark">◈</span></td><td></td></tr>
+                        <tr><td>Ticket_Preparation_BAJOU_Sofian</td><td><span class="check-mark">◈</span></td><td><span class="check-mark">◈</span></td><td></td><td></td><td><span class="check-mark">◈</span></td><td></td></tr>
+                        <tr><td>Renouvellement_Poste_Dragon_BAJOU_SofianBon</td><td></td><td><span class="check-mark">◈</span></td><td></td><td></td><td><span class="check-mark">◈</span></td><td></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2 class="section-title reveal">Contact</h2>
+            <div class="contact-grid reveal">
+                <a href="tel:0782214885" class="contact-item"><div><div class="contact-label">Téléphone</div><div class="contact-value">07 82 21 48 85</div></div></a>
+                <a href="http://www.linkedin.com/in/sofian-bajou" target="_blank" class="contact-item"><div><div class="contact-label">LinkedIn</div><div class="contact-value">linkedin.com/in/sofian-bajou</div></div></a>
+            </div>
+        </section>
+        <footer>© 2026 par Bajou Sofian.</footer>
+    </main>
+
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.z = 5;
+        const torus = new THREE.Mesh(new THREE.TorusGeometry(10, 3, 16, 100), new THREE.MeshBasicMaterial({ color: 0xdc2626, wireframe: true, transparent: true, opacity: 0.04 }));
+        scene.add(torus);
+        function animate() { requestAnimationFrame(animate); torus.rotation.x += 0.001; torus.rotation.y += 0.002; renderer.render(scene, camera); }
+        animate();
+        document.body.classList.add('js-ready');
+        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        function toggleBloc(head) { head.parentElement.classList.toggle('open'); }
+        function highlight(skillClasses) { const classes = skillClasses.split(' '); classes.forEach(cls => { const elements = document.querySelectorAll('.' + cls); elements.forEach(el => el.classList.add('skill-highlight')); }); }
+        function unhighlight() { document.querySelectorAll('.bloc-skills li').forEach(el => el.classList.remove('skill-highlight')); }
+    </script>
+</body>
+</html>
